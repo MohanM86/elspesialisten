@@ -14,6 +14,13 @@ import { ELEKTRIKER_PER_KOMMUNE, TOTALT_ELEKTRIKERE } from "@/data/elektrikere-s
 import { buildFAQSchema, buildLocalBusinessSchema } from "@/lib/utils";
 import BedriftOversikt from "@/components/ui/BedriftOversikt";
 import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
+import OsloTableOfContents from "@/components/oslo/OsloTableOfContents";
+import OsloTjenesterGrid from "@/components/oslo/OsloTjenesterGrid";
+import OsloMarketChart from "@/components/oslo/OsloMarketChart";
+import OsloPriceTable from "@/components/oslo/OsloPriceTable";
+import OsloEmergencyCards from "@/components/oslo/OsloEmergencyCards";
+import OsloProblemCards from "@/components/oslo/OsloProblemCards";
+import { AlertBox, FactBox, ChecklistBox } from "@/components/oslo/OsloVisualElements";
 
 interface Props { params: Promise<{ slug: string }>; }
 
@@ -123,137 +130,109 @@ export default async function KommuneSide({ params }: Props) {
           </div></section>
         )}
 
+        {/* ═══ STICKY TOC (Oslo only, desktop) ═══ */}
+        {isOslo && <OsloTableOfContents />}
+
         {/* ═══ HOVEDINNHOLD ═══ */}
-        <section className="section-white py-8 sm:py-12"><div className="container-site max-w-prose">
+        <section className="section-white py-8 sm:py-12"><div className="container-site max-w-4xl">
 
           {isOslo ? (<>
-            {/* ── OSLO: Full 2500+ ord artikkel ── */}
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i Oslo – komplett oversikt</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>En elektriker utfører alt arbeid knyttet til elektriske installasjoner i boliger, næringsbygg og industri. I Norge er det lovpålagt at alt arbeid på fast elektrisk anlegg utføres av autorisert elektriker registrert hos Direktoratet for samfunnssikkerhet og beredskap (DSB). Dette gjelder alt fra installasjon av en ny stikkontakt til komplett oppgradering av et helt elektrisk anlegg.</p>
-              <p>Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.</p>
-              <p>Oslo er Norges klart største marked for elektrikertjenester. Med 543 registrerte bedrifter og over 17 000 sysselsatte i bransjen er tilbudet bredt og konkurransen høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet.</p>
+            {/* ═══════════════════════════════════════════
+                OSLO: RICH INTERACTIVE ARTICLE
+                2500+ ord med visuelle elementer
+            ═══════════════════════════════════════════ */}
+
+            <div className="max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i Oslo – komplett oversikt</h2>
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
+                <p>En elektriker utfører alt arbeid knyttet til elektriske installasjoner i boliger, næringsbygg og industri. I Norge er det lovpålagt at alt arbeid på fast elektrisk anlegg utføres av autorisert elektriker registrert hos Direktoratet for samfunnssikkerhet og beredskap (DSB). Dette gjelder alt fra installasjon av en ny stikkontakt til komplett oppgradering av et helt elektrisk anlegg.</p>
+                <p>Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.</p>
+              </div>
+
+              <FactBox>Oslo er Norges klart største marked for elektrikertjenester med 543 registrerte bedrifter og over 17 000 sysselsatte. Konkurransen er høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet.</FactBox>
             </div>
 
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Elektrikertjenester i Oslo</h2>
-
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Installasjon av stikkontakter og brytere</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Installasjon av nye stikkontakter er et av de vanligste oppdragene for elektrikere i Oslo. Mange eldre leiligheter på Frogner, Majorstuen og Grünerløkka har for få stikkontakter etter dagens behov. En ny stikkontakt koster mellom 1 500 og 3 500 kr avhengig av om det kan kobles på eksisterende kurs eller om det må trekkes ny kabel fra sikringsskapet.</p>
+            {/* ── TJENESTER: Interactive grid ── */}
+            <div id="tjenester" className="scroll-mt-24 mt-12">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2 max-w-prose mx-auto">Elektrikertjenester i Oslo</h2>
+              <p className="text-body-sm text-secondary-500 mb-6 max-w-prose mx-auto">Klikk på en tjeneste for å se mer informasjon og bestille tilbud.</p>
+              <OsloTjenesterGrid />
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Oppgradering av sikringsskap</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Sikringsskapet er hjertet i det elektriske anlegget ditt. I Oslo finnes det tusenvis av boliger med sikringsskap fra 1920 til 1970 tallet som mangler jordfeilbrytere og har gamle skrusikringer. Et moderne sikringsskap med automatsikringer og jordfeilbrytere koster mellom 25 000 og 45 000 kr i Oslo. Prisen avhenger av antall kurser, boligens størrelse og om det elektriske anlegget trenger tilleggsarbeid.</p>
-              <p>Bydelene Frogner, St. Hanshaugen, Sagene og Gamle Oslo har flest boliger med eldre sikringsskap som bør oppgraderes. Oppgradering gir bedre sikkerhet mot brann og elektrisk støt, og er ofte et krav fra forsikringsselskaper.</p>
+            {/* ── ELBILLADER ── */}
+            <div id="elbillader" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Installere ladeboks i Oslo</h2>
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
+                <p>Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.</p>
+              </div>
+
+              <ChecklistBox title="Krav til installasjon" items={[
+                "Ladeboksen må monteres av autorisert elektriker",
+                "Anlegget må ha tilstrekkelig kapasitet (minimum 32A kurs for 7,4 kW lading)",
+                "Det skal installeres egen jordfeilbryter type B",
+                "Arbeidet skal meldes til Elvia (netteier i Oslo)",
+                "For borettslag og sameier kreves styremøtevedtak og ofte fellesløsning med lastbalansering",
+              ]} />
+
+              <AlertBox type="danger" title="Sikkerhet er avgjørende">
+                Feil installasjon kan føre til brann eller overbelastning. Bruk aldri skjøteledning eller vanlig stikkontakt til permanent elbillading. Ladeboksen skal ha egen dedikert kurs fra sikringsskapet.
+              </AlertBox>
+
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
+                <p>Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet. Oppgradering av hovedsikring eller inntak kommer i tillegg.</p>
+              </div>
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Elkontroll bolig</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>En elkontroll er en systematisk gjennomgang av hele det elektriske anlegget i boligen. Elektrikeren sjekker sikringsskap, jordfeilvern, kabler, stikkontakter og faste installasjoner. I Oslo koster en full elkontroll mellom 3 000 og 6 000 kr avhengig av boligens størrelse. Elkontroll anbefales hvert 5. år for boliger eldre enn 20 år, ved kjøp og salg, og etter forsikringskrav.</p>
+            {/* ── DØGNVAKT: Emergency cards ── */}
+            <div id="dognvakt" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Døgnvakt elektriker i Oslo</h2>
+              <p className="text-body-sm text-secondary-500 mb-4">Noen elektriske problemer kan ikke vente. Klikk for detaljer og handlingsråd.</p>
+              <OsloEmergencyCards />
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Installasjon av spotter og belysning</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Downlights og LED spotter gir moderne belysning og bedre romfølelse. Montering koster mellom 800 og 1 500 kr per punkt i Oslo. For et typisk rom med 6 til 8 spotter ligger totalprisen mellom 5 000 og 12 000 kr. Elektrikeren sørger for riktig plassering, dimming og at den elektriske kapasiteten er tilstrekkelig.</p>
+            {/* ── VANLIGE PROBLEMER: Interactive diagnosis cards ── */}
+            <div id="problemer" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Vanlige elektriske problemer i Oslo</h2>
+              <p className="text-body-sm text-secondary-500 mb-4">Klikk på et problem for å se årsak og anbefalt løsning.</p>
+              <OsloProblemCards />
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Oppgradering av elektrisk anlegg</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>En komplett oppgradering av det elektriske anlegget innebærer nytt sikringsskap, nye kurser, utskifting av eldre kabler og modernisering av alle punkt. I en leilighet i Oslo koster dette mellom 80 000 og 180 000 kr. For enebolig kan prisen ligge mellom 120 000 og 300 000 kr. Oppgradering er aktuelt i boliger med eldre anlegg der kablene ikke lenger er dimensjonert for dagens strømforbruk.</p>
+            {/* ── PRISER: Visual interactive table ── */}
+            <div id="priser" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Pris elektriker i Oslo – prisguide 2026</h2>
+              <p className="text-body-sm text-secondary-500 mb-1">Hold musen over en rad for å se prisintervallet visuelt.</p>
+              <OsloPriceTable />
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Feilsøking strøm</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Strømproblemer i Oslo kan skyldes overbelastning, jordfeil, kortslutning eller feil i det faste anlegget. En elektriker bruker spesialisert måleutstyr for å finne feilen. Feilsøking koster typisk mellom 2 000 og 5 000 kr avhengig av kompleksitet. Ikke prøv å løse elektriske feil selv, det kan være livsfarlig og er ulovlig uten autorisasjon.</p>
+            {/* ── MARKED: Chart + data visualization ── */}
+            <div id="marked" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Markedet for elektrikertjenester i Oslo</h2>
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
+                <p>Oslo er Norges suverent største marked for elektrikertjenester. Bransjen spenner fra store nasjonale entreprenører som Bravida, GK Norge og Caverion med hovedkontor i Oslo, til lokale spesialister i hver bydel.</p>
+              </div>
+              <OsloMarketChart />
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4 mt-4">
+                <p>Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.</p>
+              </div>
+
+              <FactBox emoji="📈">Flest bedrifter holder til i Alna og Grorud (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.</FactBox>
             </div>
 
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Smarthus installasjon</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Smarthus gir deg styring av lys, varme, sikkerhet og energiforbruk fra mobilen. I Oslo er etterspørselen spesielt høy i nye leilighetsprosjekter i Bjørvika, Nydalen og Løren, men også i eldre boliger som oppgraderes. En grunnleggende smarthusinstallasjon med styring av lys og varme koster fra 15 000 kr. Komplett system med sikkerhet, lås og energistyring kan koste 50 000 til 150 000 kr.</p>
-            </div>
-
-            <h3 className="font-display font-bold text-heading-md text-secondary-950 mt-6 mb-2">Renovering av elektrisk anlegg</h3>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Ved renovering av bad, kjøkken eller hele boligen må det elektriske anlegget oppdateres samtidig. Elektrikeren flytter punkt, installerer nye kurser for våtrom, og sørger for at alt tilfredsstiller NEK 400 og gjeldende forskrifter. I Oslo er dette spesielt aktuelt i bygårder fra tidlig 1900 tall der originale kabler og installasjoner ikke lenger er forsvarlige.</p>
-            </div>
-
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Installere ladeboks i Oslo</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.</p>
-              <p>Krav til installasjon: ladeboksen må monteres av autorisert elektriker, anlegget må ha tilstrekkelig kapasitet (minimum 32A kurs for 7,4 kW lading), det skal installeres egen jordfeilbryter type B, og arbeidet skal meldes til Elvia (netteier i Oslo). For borettslag og sameier kreves styremøtevedtak og ofte fellesløsning med lastbalansering.</p>
-              <p>Sikkerhet er avgjørende. Feil installasjon kan føre til brann eller overbelastning. Bruk aldri skjøteledning eller vanlig stikkontakt til permanent elbillading. Ladeboksen skal ha egen dedikert kurs fra sikringsskapet.</p>
-              <p>Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet. Oppgradering av hovedsikring eller inntak kommer i tillegg.</p>
-            </div>
-
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Døgnvakt elektriker i Oslo</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Noen elektriske problemer kan ikke vente. Døgnvakt elektriker i Oslo er tilgjengelig for akutte situasjoner utenom ordinær arbeidstid. Typiske situasjoner der du trenger akutt elektriker:</p>
-              <p><strong className="text-secondary-900">Strømbrudd</strong> – Hvis hele eller deler av boligen er uten strøm og problemet ikke skyldes netteier (sjekk Elvias feilkart), kan det være intern feil som krever elektriker. Sjekk om hovedsikringen er utløst.</p>
-              <p><strong className="text-secondary-900">Kortslutning</strong> – Lysglimt, smell eller sikring som umiddelbart løser ut igjen kan tyde på kortslutning. Ikke forsøk å koble inn igjen gjentatte ganger. Kontakt elektriker.</p>
-              <p><strong className="text-secondary-900">Jordfeil</strong> – Jordfeilbryter som løser ut beskytter mot elektrisk støt. Hvis den løser ut gjentatte ganger, trekk ut alle støpsler og koble inn én og én for å finne kilden. Ved vedvarende problem, ring elektriker.</p>
-              <p><strong className="text-secondary-900">Brent sikringsskap</strong> – Lukt av brent plast, misfarging eller varme fra sikringsskapet er alvorlig og kan indikere brannfare. Slå av hovedbryteren og ring elektriker umiddelbart. Ved synlig røyk, ring brannvesenet på 110.</p>
-              <p>Døgnvakt elektriker i Oslo har normalt utrykningsgebyr på 1 500 til 3 000 kr pluss timepris med kveld og helgetillegg. Den totale kostnaden avhenger av feilens art og omfang.</p>
-            </div>
-
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Vanlige elektriske problemer i Oslo</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p><strong className="text-secondary-900">Sikringen går hele tiden</strong> – Vanligste årsak er overbelastning: for mange apparater på samme kurs. Kan også skyldes jordfeil i et apparat eller feil i det faste anlegget. Løsning: fordel belastningen eller la en elektriker legge nye kurser.</p>
-              <p><strong className="text-secondary-900">Stikkontakt virker ikke</strong> – Sjekk om sikringen er utløst. Hvis ikke, kan kontakten være ødelagt eller koblingen løs. En defekt stikkontakt med varmgang er brannfarlig og bør byttes umiddelbart av elektriker.</p>
-              <p><strong className="text-secondary-900">Strømmen går i deler av huset</strong> – Tyder på at en enkelt kurs har feilet. Sjekk hvilken sikring som er utløst i sikringsskapet. Hvis problemet gjentar seg, kontakt elektriker for feilsøking.</p>
-              <p><strong className="text-secondary-900">Sikringsskapet er gammelt</strong> – Har du skrusikringer, ingen jordfeilbryter, eller et skap med synlig slitasje, bør det oppgraderes. Gamle sikringsskap er en av de vanligste årsakene til boligbrann i Norge.</p>
-              <p><strong className="text-secondary-900">Varmgang i stikkontakt eller bryter</strong> – Varm eller misfarget stikkontakt er et alvorlig faresignal. Koble fra alt i kontakten umiddelbart og kontakt elektriker. Varmgang kan skyldes løs kobling, for høy belastning eller feil dimensjonering.</p>
-            </div>
-
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Pris elektriker i Oslo – prisguide 2026</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Prisene under er basert på markedsdata og gjelder som veiledende priser for Oslo. Faktisk pris avhenger av bedrift, oppdragets omfang og tidspunkt. Alle priser er inkludert moms.</p>
-            </div>
-            <div className="overflow-x-auto mt-4 mb-6">
-              <table className="w-full text-body-sm border-collapse">
-                <thead><tr className="bg-neutral-50">
-                  <th className="text-left px-4 py-3 font-display font-semibold text-secondary-900 border-b border-neutral-200">Tjeneste</th>
-                  <th className="text-right px-4 py-3 font-display font-semibold text-secondary-900 border-b border-neutral-200">Prisområde (kr)</th>
-                </tr></thead>
-                <tbody className="text-secondary-600">
-                  {[
-                    ["Elektriker timepris", "850 – 1 400"],
-                    ["Utrykningsgebyr", "500 – 1 500"],
-                    ["Installasjon stikkontakt", "1 500 – 3 500"],
-                    ["Montering spotter (per punkt)", "800 – 1 500"],
-                    ["Oppgradering sikringsskap", "25 000 – 45 000"],
-                    ["Installasjon elbillader", "12 000 – 35 000"],
-                    ["Elkontroll bolig", "3 000 – 6 000"],
-                    ["Feilsøking strøm", "2 000 – 5 000"],
-                    ["Smarthus grunnpakke", "15 000 – 50 000"],
-                    ["Komplett oppgradering anlegg (leilighet)", "80 000 – 180 000"],
-                  ].map(([tjeneste, pris]) => (
-                    <tr key={tjeneste} className="border-b border-neutral-100 hover:bg-neutral-50"><td className="px-4 py-2.5">{tjeneste}</td><td className="px-4 py-2.5 text-right font-medium text-secondary-900">{pris}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mt-10 mb-4">Markedet for elektrikertjenester i Oslo</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>Oslo er Norges suverent største marked for elektrikertjenester. Med 543 registrerte bedrifter og over 17 000 ansatte i bransjen er tilbudet bredt. Av disse er 395 aksjeselskap, 106 enkeltpersonforetak og 21 NUF. 373 bedrifter er MVA registrert.</p>
-              <p>Bransjen spenner fra store nasjonale entreprenører som Bravida (3 355 ansatte), GK Norge (1 877 ansatte) og Caverion (1 860 ansatte) med hovedkontor i Oslo, til lokale spesialister som Lysteknikk Elektroentreprenør (157 ansatte), Eltera (116 ansatte) og Elektriker Gruppen (96 ansatte).</p>
-              <p>Flest bedrifter holder til i Alna og Grorud området (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.</p>
-              <p>Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.</p>
-            </div>
           </>) : (<>
             {/* ── GENERISK KOMMUNE ── */}
-            <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i {kommune.navn} – hva du trenger å vite</h2>
-            <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-              <p>{kommune.langTekst}</p>
-              {antallBedrifter > 0 && <p>Elektrikerbransjen i {kommune.navn} teller {antallBedrifter} registrerte bedrifter under næringskode 43.210 (elektrisk installasjonsarbeid) ifølge Brønnøysundregistrene. Markedet spenner fra enkeltpersonforetak til etablerte elektroentreprenører.</p>}
+            <div className="max-w-prose mx-auto">
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i {kommune.navn} – hva du trenger å vite</h2>
+              <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
+                <p>{kommune.langTekst}</p>
+                {antallBedrifter > 0 && <p>Elektrikerbransjen i {kommune.navn} teller {antallBedrifter} registrerte bedrifter under næringskode 43.210 (elektrisk installasjonsarbeid) ifølge Brønnøysundregistrene. Markedet spenner fra enkeltpersonforetak til etablerte elektroentreprenører.</p>}
+              </div>
             </div>
           </>)}
         </div></section>
 
         {/* ═══ BEDRIFTSOVERSIKT (kun Oslo) ═══ */}
         {isOslo && (
-          <section className="section-subtle py-8 sm:py-12" aria-labelledby="bedrifter-heading">
+          <section id="bedrifter" className="scroll-mt-24 section-subtle py-8 sm:py-12" aria-labelledby="bedrifter-heading">
             <div className="container-site max-w-4xl">
               <h2 id="bedrifter-heading" className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Elektrikerbedrifter i Oslo – komplett liste</h2>
               <p className="text-body-sm text-secondary-500 mb-6">Alle {antallBedrifter} bedrifter registrert under næringskode 43.210 i Brønnøysundregistrene. Offentlig tilgjengelig markedsinformasjon. Bedriftene er ikke tilknyttet Elspesialisten.</p>
@@ -263,7 +242,7 @@ export default async function KommuneSide({ params }: Props) {
         )}
 
         {/* ═══ FAQ ═══ */}
-        <section className={`${isOslo ? "section-white" : "section-subtle"} py-8 sm:py-12`}>
+        <section id="faq" className={`scroll-mt-24 ${isOslo ? "section-white" : "section-subtle"} py-8 sm:py-12`}>
           <div className="container-site max-w-prose">
             <FAQ items={faqItems} tittel={`Vanlige spørsmål om elektriker i ${kommune.navn}`} showSchema={false} />
           </div>
