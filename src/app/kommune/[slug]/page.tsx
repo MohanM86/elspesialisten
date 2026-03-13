@@ -12,6 +12,8 @@ import { getKommune, getAllKommuneSlugs, getKommunerByFylke } from "@/data/kommu
 import { TJENESTER } from "@/data/tjenester";
 import { ELEKTRIKER_PER_KOMMUNE, TOTALT_ELEKTRIKERE } from "@/data/elektrikere-stats";
 import { buildFAQSchema, buildBreadcrumbSchema } from "@/lib/utils";
+import BedriftOversikt from "@/components/ui/BedriftOversikt";
+import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
 
 interface Props { params: Promise<{ slug: string }>; }
 
@@ -75,6 +77,15 @@ export default async function KommuneSide({ params }: Props) {
         {antallBedrifter > 0 && <p>Elektrikerbransjen i {kommune.navn} teller {antallBedrifter} registrerte bedrifter under næringskode 43.210 (elektrisk installasjonsarbeid) ifølge Brønnøysundregistrene. Markedet spenner fra mindre enkeltpersonforetak til etablerte elektroentreprenører med flere ansatte.</p>}
       </div>
     </div></section>
+    {slug === "oslo" && (
+      <section className="section-subtle py-8 sm:py-12" aria-labelledby="bedrifter-heading">
+        <div className="container-site max-w-4xl">
+          <h2 id="bedrifter-heading" className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Elektrikerbedrifter i {kommune.navn}</h2>
+          <p className="text-body-sm text-secondary-500 mb-6">Alle {antallBedrifter} bedrifter registrert under næringskode 43.210 i Brønnøysundregistrene. Data er offentlig tilgjengelig markedsinformasjon.</p>
+          <BedriftOversikt bedrifter={OSLO_BEDRIFTER} kommune={kommune.navn} />
+        </div>
+      </section>
+    )}
     <section className="section-subtle section-py-sm"><div className="container-site max-w-prose"><FAQ items={kommuneFAQ} tittel={`Vanlige spørsmål om elektriker i ${kommune.navn}`} showSchema={false} /></div></section>
     {relatertKommuner.length > 0 && (<section className="section-white section-py-sm"><div className="container-site">
       <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-5">Elektriker i nærliggende kommuner i {kommune.fylke}</h2>
