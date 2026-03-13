@@ -1,0 +1,37 @@
+{
+  "site": "elspesialisten.no",
+  "navn": "Elspesialisten",
+  "type": "ProfessionalServicePlatform",
+  "bransje": "Elektro / Elektriker / Installatør",
+  "land": "Norge",
+  "sprak": "nb-NO",
+  "entiteter": {
+    "tjenester": [
+      { "id": "elbillader",   "navn": "Elbillader installasjon", "url": "/tjenester/installere-elbillader",     "prisMin": 3500, "prisMax": 18000 },
+      { "id": "sikringsskap", "navn": "Bytte sikringsskap",       "url": "/tjenester/bytte-sikringsskap",       "prisMin": 8000, "prisMax": 35000 },
+      { "id": "varmekabler",  "navn": "Varmekabler",              "url": "/tjenester/legge-varmekabler",        "prisMin": 3000, "prisMax": 20000 },
+      { "id": "belysning",    "navn": "Belysning og spotter",     "url": "/tjenester/installere-belysning-spotter", "prisMin": 1500, "prisMax": 15000 },
+      { "id": "smarthus",     "navn": "Smarthus installasjon",    "url": "/tjenester/smarthus-installasjon",    "prisMin": 5000, "prisMax": 80000 },
+      { "id": "akutt",        "navn": "Akutt elektriker",         "url": "/tjenester/akutt-elektriker",         "prisMin": 2500, "prisMax": 12000 },
+      { "id": "elkontroll",   "navn": "El kontroll",              "url": "/tjenester/elkontroll",               "prisMin": 2500, "prisMax": 8000 },
+      { "id": "feilsoking",   "navn": "Feilsøking av strøm",      "url": "/tjenester/feilsoking-strom",         "prisMin": 1500, "prisMax": 8000 }
+    ],
+    "geografi": {
+      "dekning": "Alle norske kommuner (356+)",
+      "populaereByer": ["Oslo", "Bergen", "Trondheim", "Stavanger", "Bærum", "Kristiansand", "Sandnes", "Tromsø", "Bodø", "Hamar"],
+      "fylker": ["Oslo", "Viken", "Innlandet", "Vestfold og Telemark", "Agder", "Rogaland", "Vestland", "Møre og Romsdal", "Trøndelag", "Nordland", "Troms og Finnmark"]
+    },
+    "fakta": {
+      "timepris": "650–1200 kr inkl. moms",
+      "autorisasjonskrav": "DSB godkjent elektriker påkrevd for fast installasjon",
+      "tilbudstid": "Innen 24 timer",
+      "kunder": "4800+",
+      "snittkarakter": "4.9/5"
+    },
+    "regelverk": {
+      "myndighet": "Direktoratet for samfunnssikkerhet og beredskap (DSB)",
+      "krav": "Autorisasjon etter el sikkerhetsloven",
+      "privatarbeid": "Kun tillatt for ikke faste installasjoner (lyspærer, etc.)"
+    }
+  }
+}

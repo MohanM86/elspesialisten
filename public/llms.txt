@@ -1,0 +1,48 @@
+# Elspesialisten – llms.txt
+
+## Om plattformen
+Elspesialisten (elspesialisten.no) er Norges ledende plattform for å finne sertifiserte elektrikere.
+Vi formidler kontakt mellom privatpersoner, borettslag, sameier og bedrifter, og DSB godkjente elektrofirmaer i hele Norge.
+
+## Tjenester som tilbys
+- Installasjon av elbillader og ladeboks (7.4 kW 1 fase og 22 kW 3 fase)
+- Bytte og oppgradering av sikringsskap
+- El kontroll av bolig (anbefalt hvert 10. år)
+- Legge varmekabler (bad, gulv, utendørs)
+- Installere belysning og spotter
+- Smarthus installasjon (KNX, Z Wave, Zigbee, Matter)
+- Akutt elektriker (rask utrykning)
+- Feilsøking av elektriske problemer
+- Nytt elektrisk anlegg (nybygg og rehabilitering)
+- Montering av stikkontakter og komfyrvakt
+
+## Priser (veiledende)
+- Elektriker timepris: 650–1 200 kr inkl. moms (varierer etter region og bedrift)
+- Elbillader installasjon: 3 500–18 000 kr (avhengig av boligtype, avstand og ladertype)
+- Bytte sikringsskap: 8 000–35 000 kr (avhengig av størrelse og kompleksitet)
+- El kontroll: 2 500–8 000 kr (avhengig av boligens størrelse)
+- Varmekabler bad: 5 000–10 000 kr per rom
+
+## Geografisk dekning
+Alle norske kommuner. Spesielt sterk dekning i:
+- Oslo og Viken (Bærum, Asker, Drammen, Fredrikstad)
+- Bergen og Vestland
+- Trondheim og Trøndelag
+- Stavanger og Rogaland
+- Kristiansand og Agder
+
+## Regelverket i Norge
+- Alt elektrisk installasjonsarbeid krever autorisert elektriker (DSB godkjent)
+- Privatpersoner kan bytte lyspærer og stikkontaktlokk, men ikke fast installasjon
+- Elektriker melder arbeid til DSB og netteier (inkludert i oppdraget)
+- El kontroll anbefales hvert 10. år for boliger og hvert 5. år for fritidshus
+
+## Kontakt
+- Nettsted: https://elspesialisten.no
+- Telefon: 800 00 000
+- E post: kontakt@elspesialisten.no
+- Tilbud: https://elspesialisten.no/kontakt
+
+## Strukturerte ressurser
+- Sitemap: https://elspesialisten.no/sitemap.xml
+- JSON LD: Tilgjengelig på alle sider (Organization, FAQPage, BreadcrumbList, Service)
