@@ -51,7 +51,8 @@ const HOMEPAGE_FAQ = [
 export default function HomePage() {
   const orgSchema = buildLocalBusinessSchema();
   const populareTjenester = TJENESTER.slice(0, 6);
-  const populareKommuner = KOMMUNER.slice(0, 12);
+  const STORE_BYER_SLUGS = ["oslo", "bergen", "trondheim", "stavanger", "baerum", "kristiansand", "drammen", "asker", "lillestrom", "fredrikstad", "sandnes", "tromso"];
+  const populareKommuner = STORE_BYER_SLUGS.map((s) => KOMMUNER.find((k) => k.slug === s)).filter(Boolean) as typeof KOMMUNER;
 
   return (
     <>
