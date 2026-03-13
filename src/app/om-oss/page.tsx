@@ -16,7 +16,7 @@ export default function OmOss() {
       <p className="text-body-lg text-primary-100 max-w-2xl mx-auto">Elspesialisten kobler privatpersoner, borettslag og bedrifter med sertifiserte elektrikere i hele Norge, raskt, trygt og gratis.</p>
     </div></section>
     <section className="section-white section-py-sm"><div className="container-site py-10"><div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:divide-x lg:divide-neutral-200">
-      {[{ verdi: "4 800+", label: "Fornøyde kunder" },{ verdi: "340+", label: "Kommuner dekket" },{ verdi: "4.9/5", label: "Snittkarakter" },{ verdi: "98%", label: "Anbefaler oss" }].map(({ verdi, label }) => (<div key={label} className="text-center lg:px-8"><div className="font-display font-extrabold text-display-xl text-primary-600 mb-1">{verdi}</div><div className="text-body-sm text-secondary-500">{label}</div></div>))}
+      {[{ verdi: "340+", label: "Kommuner dekket" },{ verdi: "11", label: "Fylker i Norge" },{ verdi: "24t", label: "Maks responstid" },{ verdi: "100%", label: "DSB autoriserte" }].map(({ verdi, label }) => (<div key={label} className="text-center lg:px-8"><div className="font-display font-extrabold text-display-xl text-primary-600 mb-1">{verdi}</div><div className="text-body-sm text-secondary-500">{label}</div></div>))}
     </div></div></section>
     <section className="section-subtle section-py-sm"><div className="container-site max-w-prose">
       <h2 className="font-display font-bold text-display-lg text-secondary-950 mb-5">Hvem er Elspesialisten?</h2>

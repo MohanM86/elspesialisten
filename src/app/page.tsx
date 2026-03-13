@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { verdi: "4 800+", label: "Fornøyde kunder", suffix: "" },
-  { verdi: "4.9", label: "Snittkarakter", suffix: "/5" },
   { verdi: "340+", label: "Kommuner dekket", suffix: "" },
-  { verdi: "98%", label: "Anbefaler oss", suffix: "" },
+  { verdi: "11", label: "Fylker i Norge", suffix: "" },
+  { verdi: "24t", label: "Maks responstid", suffix: "" },
+  { verdi: "100%", label: "DSB autoriserte", suffix: "" },
 ];
 
 const TRUST_POINTS = [
@@ -31,10 +31,10 @@ const TRUST_POINTS = [
   { ikkon: Award, tittel: "Garantert kvalitet", tekst: "Alle oppdrag utføres etter NS 3700 og gjeldende forskrifter." },
 ];
 
-const TESTIMONIALS = [
-  { navn: "Anders H.", sted: "Oslo", tekst: "Fikk tre tilbud på elbillader i løpet av noen timer. Valgte den rimeligste, veldig profesjonell jobb!", stjerner: 5, tjeneste: "Elbillader installasjon" },
-  { navn: "Kari M.", sted: "Bergen", tekst: "Gammel bolig med skrusikringer. Elektriker rykket ut neste dag og byttet hele skapet. Topp service!", stjerner: 5, tjeneste: "Bytte sikringsskap" },
-  { navn: "Petter L.", sted: "Trondheim", tekst: "Smarthus installasjon i ny enebolig. Elektriker hadde god kunnskap om KNX og leverte over forventning.", stjerner: 5, tjeneste: "Smarthus installasjon" },
+const PROSESS_STEG = [
+  { steg: "1", tittel: "Send forespørsel", tekst: "Fyll ut skjemaet med hva du trenger hjelp med, postnummer og kontaktinfo. Tar under ett minutt." },
+  { steg: "2", tittel: "Vi finner elektriker", tekst: "Vi matcher deg med en autorisert elektriker i ditt område basert på oppdragstype og tilgjengelighet." },
+  { steg: "3", tittel: "Motta tilbud", tekst: "Elektriker kontakter deg innen 24 timer med et konkret og uforpliktende tilbud. Du velger selv om du vil gå videre." },
 ];
 
 const HOMEPAGE_FAQ = [
@@ -68,7 +68,7 @@ export default function HomePage() {
                   Gratis og uforpliktende tilbud fra DSB godkjente elektrikere i hele Norge. Elbillader, sikringsskap, smarthus og alle elektriske tjenester.
                 </p>
                 <ul className="space-y-3 mb-8 animate-fade-up" style={{ animationDelay: "150ms" }}>
-                  {["Svar innen 24 timer", "100% autoriserte fagpersoner", "Gratis og uforpliktende", "Dekker 340+ kommuner"].map((punkt) => (
+                  {["Svar innen 24 timer", "100% autoriserte fagpersoner", "Gratis og uforpliktende", "Dekker hele Norge"].map((punkt) => (
                     <li key={punkt} className="flex items-center gap-2.5 text-body-md text-secondary-700"><CheckCircle className="w-5 h-5 text-success-600 flex-shrink-0" aria-hidden />{punkt}</li>
                   ))}
                 </ul>
@@ -77,11 +77,10 @@ export default function HomePage() {
                   <a href="tel:+4780000000" className="btn-phone text-cta-lg px-8 py-4 rounded-12"><Phone className="w-5 h-5" aria-hidden />Ring oss nå</a>
                 </div>
                 <div className="flex items-center gap-3 mt-7 animate-fade-up" style={{ animationDelay: "250ms" }}>
-                  <div className="flex -space-x-2">
-                    {[1,2,3,4,5].map((i) => (<div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 border-2 border-white flex items-center justify-center text-white text-caption font-bold">{String.fromCharCode(64 + i)}</div>))}
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-success-600" aria-hidden />
+                    <span className="text-body-sm text-secondary-600">Kun <strong className="text-secondary-900">DSB autoriserte</strong> elektrikere i hele Norge</span>
                   </div>
-                  <div className="flex items-center gap-1">{[1,2,3,4,5].map((i) => (<Star key={i} className="w-4 h-4 text-accent-500 fill-accent-500" aria-hidden />))}</div>
-                  <span className="text-body-sm text-secondary-600"><strong className="text-secondary-900">4.9/5</strong> fra 4 800+ kunder</span>
                 </div>
               </div>
               <div id="tilbud" className="animate-slide-in-right" style={{ animationDelay: "100ms" }}>
@@ -100,7 +99,7 @@ export default function HomePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-neutral-200">
               {STATS.map(({ verdi, label, suffix }) => (
                 <div key={label} className="text-center lg:px-8">
-                  <div className="font-display font-extrabold text-display-xl text-primary-600 mb-1">{verdi}{suffix && <span className="text-display-lg text-secondary-400">{suffix}</span>}</div>
+                  <div className="font-display font-extrabold text-display-xl text-primary-600 mb-1 whitespace-nowrap">{verdi}{suffix && <span className="text-display-lg text-secondary-400">{suffix}</span>}</div>
                   <div className="text-body-sm text-secondary-500">{label}</div>
                 </div>
               ))}
@@ -171,22 +170,18 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section-white section-py" aria-labelledby="anmeldelser-heading">
+        <section className="section-white section-py" aria-labelledby="prosess-heading">
           <div className="container-site">
             <div className="text-center mb-12">
-              <h2 id="anmeldelser-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Hva sier kundene?</h2>
-              <div className="flex items-center justify-center gap-2 mb-2">{[1,2,3,4,5].map((i) => (<Star key={i} className="w-5 h-5 text-accent-500 fill-accent-500" aria-hidden />))}<span className="font-display font-bold text-heading-md text-secondary-900 ml-2">4.9</span></div>
-              <p className="text-body-sm text-secondary-500">Basert på 4 800+ vurderinger</p>
+              <h2 id="prosess-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Slik fungerer det</h2>
+              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Tre enkle steg fra forespørsel til ferdig jobb.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {TESTIMONIALS.map((t) => (
-                <div key={t.navn} className="card p-6">
-                  <div className="flex items-center gap-1 mb-3">{Array.from({ length: t.stjerner }).map((_, i) => (<Star key={i} className="w-4 h-4 text-accent-500 fill-accent-500" aria-hidden />))}</div>
-                  <p className="text-body-md text-secondary-700 mb-5 italic leading-relaxed">«{t.tekst}»</p>
-                  <div className="flex items-center justify-between">
-                    <div><div className="text-label font-bold text-secondary-900">{t.navn}</div><div className="flex items-center gap-1 text-caption text-secondary-400"><MapPin className="w-3 h-3" aria-hidden />{t.sted}</div></div>
-                    <div className="badge-primary text-[0.7rem]">{t.tjeneste}</div>
-                  </div>
+              {PROSESS_STEG.map((s) => (
+                <div key={s.steg} className="card p-6">
+                  <div className="w-12 h-12 rounded-full bg-primary-500 text-white flex items-center justify-center font-display font-bold text-heading-lg mb-4">{s.steg}</div>
+                  <h3 className="font-display font-semibold text-heading-sm text-secondary-900 mb-2">{s.tittel}</h3>
+                  <p className="text-body-sm text-secondary-500">{s.tekst}</p>
                 </div>
               ))}
             </div>
@@ -198,7 +193,7 @@ export default function HomePage() {
             <div className="text-center mb-10">
               <div className="badge-neutral mb-4 mx-auto"><MapPin className="w-3 h-3" aria-hidden />Lokal dekning</div>
               <h2 id="kommuner-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Elektriker i din kommune</h2>
-              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Vi har sertifiserte elektrikere i 340+ norske kommuner. Finn din kommune og se lokale priser og tilbud.</p>
+              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Vi formidler kontakt med sertifiserte elektrikere over hele Norge. Finn din kommune og be om tilbud.</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
               {populareKommuner.map((k) => (
@@ -229,12 +224,12 @@ export default function HomePage() {
         <section className="section-subtle section-py-sm" aria-labelledby="cta-main">
           <div className="container-site">
             <div className="cta-block">
-              <div className="badge mx-auto mb-5 bg-white/20 text-white border-white/30"><Users className="w-3 h-3" aria-hidden />4 800+ fornøyde kunder</div>
+              <div className="badge mx-auto mb-5 bg-white/20 text-white border-white/30"><Zap className="w-3 h-3" aria-hidden />Gratis og uforpliktende</div>
               <h2 id="cta-main" className="font-display font-extrabold text-display-xl text-white mb-4 text-balance">Klar til å finne rett elektriker?</h2>
               <p className="text-body-lg text-primary-100 mb-8 max-w-lg mx-auto">Fyll ut skjemaet og motta gratis tilbud fra sertifiserte elektrikere i ditt område, innen 24 timer.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="#tilbud" className="btn bg-white text-primary-600 text-cta-lg px-8 py-4 rounded-12 hover:bg-primary-50 shadow-card-xl">Få gratis tilbud nå <ArrowRight className="w-5 h-5" /></Link>
-                <a href="tel:+4780000000" className="btn border-2 border-white/50 text-white text-cta-lg px-8 py-4 rounded-12 hover:bg-white/10"><Phone className="w-5 h-5" aria-hidden />Ring 800 00 000</a>
+                <a href="tel:+4780000000" className="btn border-2 border-white/50 text-white text-cta-lg px-8 py-4 rounded-12 hover:bg-white/10"><Phone className="w-5 h-5" aria-hidden />Ring oss</a>
               </div>
             </div>
           </div>

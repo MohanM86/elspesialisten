@@ -35,7 +35,7 @@ const INFO_LINKS = [
 const TRUST_BADGES = [
   { ikkon: Shield, tekst: "Sertifiserte elektrikere" },
   { ikkon: Award,  tekst: "DSB godkjente fagpersoner" },
-  { ikkon: Star,   tekst: "4.9/5 snittkarakter" },
+  { ikkon: Star,   tekst: "Rask respons i hele Norge" },
 ];
 
 export default function Footer() {
