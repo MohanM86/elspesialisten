@@ -14,13 +14,15 @@ import { ELEKTRIKER_PER_KOMMUNE, TOTALT_ELEKTRIKERE } from "@/data/elektrikere-s
 import { buildFAQSchema, buildLocalBusinessSchema } from "@/lib/utils";
 import BedriftOversikt from "@/components/ui/BedriftOversikt";
 import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
+import { BERGEN_BEDRIFTER } from "@/data/bedrifter/bergen";
 import OsloTableOfContents from "@/components/oslo/OsloTableOfContents";
-import OsloTjenesterGrid from "@/components/oslo/OsloTjenesterGrid";
-import OsloMarketChart from "@/components/oslo/OsloMarketChart";
-import OsloPriceTable from "@/components/oslo/OsloPriceTable";
+import CityTjenesterGrid from "@/components/city/CityTjenesterGrid";
+import CityMarketChart from "@/components/city/CityMarketChart";
+import CityPriceTable from "@/components/city/CityPriceTable";
 import OsloEmergencyCards from "@/components/oslo/OsloEmergencyCards";
 import OsloProblemCards from "@/components/oslo/OsloProblemCards";
 import { AlertBox, FactBox, ChecklistBox } from "@/components/oslo/OsloVisualElements";
+import { getCityConfig } from "@/data/city-configs";
 
 interface Props { params: Promise<{ slug: string }>; }
 
@@ -59,6 +61,21 @@ const OSLO_FAQ = [
   { sporsmal: "Er det lovlig å bytte lyspærer og stikkontaktdeksler selv?", svar: "Du kan bytte lyspærer, sette inn støpsler og bytte deksel på stikkontakter og brytere. Alt annet arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette inkluderer å trekke nye kabler, installere nye punkt og arbeide i sikringsskapet." },
 ];
 
+const BERGEN_FAQ = [
+  { sporsmal: "Hva koster elektriker i Bergen?", svar: "Timeprisen for elektriker i Bergen ligger mellom 800 og 1 300 kr inkludert moms. Bergen har noe lavere prisnivå enn Oslo, men høyere enn landsgjennomsnittet. Utrykningsgebyr ligger typisk på 500 til 1 400 kr. Innhent alltid minst tre skriftlige tilbud." },
+  { sporsmal: "Hvor mange elektrikerbedrifter finnes i Bergen?", svar: "Det er 208 bedrifter registrert under næringskode 43.210 (elektrisk installasjonsarbeid) i Bergen ifølge Brønnøysundregistrene. 137 er aksjeselskap og 61 er enkeltpersonforetak. 58 bedrifter har registrerte ansatte, og bransjen sysselsetter over 1 500 personer i Bergen." },
+  { sporsmal: "Hvor raskt kan elektriker komme i Bergen?", svar: "Ved akutte situasjoner som strømbrudd eller jordfeil kan døgnvakt elektriker i Bergen som regel være på plass innen 1 til 3 timer. For planlagte oppdrag bør du regne med 1 til 5 virkedager avhengig av sesong og bedrift." },
+  { sporsmal: "Er sikringsskap i eldre trehus i Bergen ekstra utsatt?", svar: "Ja. Bergen har en av Norges største samlinger av eldre trehusbebyggelse, spesielt i Sandviken, Nordnes og Nygård. Gamle sikringsskap i trehus er en betydelig brannrisiko. Oppgradering koster mellom 22 000 og 40 000 kr og er en viktig brannforebyggende investering." },
+  { sporsmal: "Kan jeg installere elbillader selv i Bergen?", svar: "Nei. All installasjon av ladeboks for elbil må utføres av autorisert elektriker. Elektrikeren melder arbeidet til BKK (netteier i Bergen) og sikrer at anlegget tåler belastningen. Installasjon i Bergen koster typisk mellom 10 000 og 30 000 kr." },
+  { sporsmal: "Hva koster det å installere stikkontakt i Bergen?", svar: "Installasjon av en ny stikkontakt i Bergen koster typisk mellom 1 400 og 3 200 kr inkludert materiell. Prisen avhenger av om det finnes eksisterende kurs i nærheten eller om det må trekkes ny kabel." },
+  { sporsmal: "Hva koster montering av spotter i Bergen?", svar: "Montering av downlights og spotter koster mellom 750 og 1 400 kr per punkt i Bergen. For et typisk rom med 6 til 8 spotter ligger totalprisen mellom 4 500 og 11 000 kr inkludert materiell og arbeid." },
+  { sporsmal: "Når trenger jeg elkontroll i Bergen?", svar: "Elkontroll anbefales hvert 5. år for boliger eldre enn 20 år, ved kjøp og salg av bolig, og ved forsikringskrav. I Bergen er det spesielt viktig for eldre trehus der fukt kan påvirke det elektriske anlegget. En full elkontroll koster mellom 2 800 og 5 500 kr." },
+  { sporsmal: "Hva gjør jeg ved strømbrudd i Bergen?", svar: "Sjekk først om problemet er lokalt. Sjekk sikringsskapet for utløste sikringer. Vedvarer problemet, kontakt BKK (netteier i Bergen) på 55 12 73 53 eller ring en døgnvakt elektriker." },
+  { sporsmal: "Påvirker Bergensværet det elektriske anlegget?", svar: "Ja. Bergens høye nedbørsmengder og fuktighet kan gi ekstra utfordringer for elektriske anlegg, spesielt i eldre bygg. Fukt kan forårsake jordfeil og korrosjon i koblingsbokser. Regelmessig elkontroll er ekstra viktig i Bergen." },
+  { sporsmal: "Hva koster oppgradering av elektrisk anlegg i Bergen?", svar: "En full oppgradering i leilighet i Bergen koster mellom 70 000 og 160 000 kr. For enebolig kan prisen ligge mellom 100 000 og 250 000 kr. Prisen inkluderer nytt sikringsskap, nye kurser og utskifting av eldre kabler." },
+  { sporsmal: "Er det lovlig å bytte lyspærer og stikkontaktdeksler selv?", svar: "Du kan bytte lyspærer, sette inn støpsler og bytte deksel på stikkontakter og brytere. Alt annet arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette gjelder i hele Norge, også i Bergen." },
+];
+
 export default async function KommuneSide({ params }: Props) {
   const { slug } = await params;
   const kommune = getKommune(slug);
@@ -66,6 +83,10 @@ export default async function KommuneSide({ params }: Props) {
   const relatertKommuner = getKommunerByFylke(kommune.fylkeSlug).filter((k) => k.slug !== slug).slice(0, 8);
   const antallBedrifter = ELEKTRIKER_PER_KOMMUNE[slug] || 0;
   const isOslo = slug === "oslo";
+  const isBergen = slug === "bergen";
+  const isRichCity = isOslo || isBergen;
+  const cityConfig = getCityConfig(slug);
+  const bedrifterData = isOslo ? OSLO_BEDRIFTER : isBergen ? BERGEN_BEDRIFTER : [];
 
   /* ─── Generic FAQ for non-Oslo ─── */
   const genericFAQ = [
@@ -76,7 +97,7 @@ export default async function KommuneSide({ params }: Props) {
     { sporsmal: `Kan jeg gjøre elektrisk arbeid selv?`, svar: `Du kan bytte lyspærer og sette inn støpsler. Alt arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette gjelder i hele Norge, også i ${kommune.navn}.` },
   ];
 
-  const faqItems = isOslo ? OSLO_FAQ : genericFAQ;
+  const faqItems = isOslo ? OSLO_FAQ : isBergen ? BERGEN_FAQ : genericFAQ;
 
   /* ─── JSON-LD Schemas ─── */
   const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqItems.map((f) => ({ "@type": "Question", name: f.sporsmal, acceptedAnswer: { "@type": "Answer", text: f.svar } })) };
@@ -100,7 +121,7 @@ export default async function KommuneSide({ params }: Props) {
             <div>
               <div className="badge-primary mb-3"><MapPin className="w-3 h-3" aria-hidden />{kommune.fylke}</div>
               <h1 id="kommune-hero" className="font-display font-extrabold text-display-xl text-secondary-950 mb-3 text-balance">Elektriker i <span className="text-gradient-primary">{kommune.navn}</span></h1>
-              <p className="text-body-md text-secondary-600 mb-4">{isOslo ? "Trenger du elektriker i Oslo? Vi hjelper deg å finne riktig fagperson til jobben. Enten det gjelder installasjon av elbillader, oppgradering av sikringsskap, feilsøking av strøm eller akutt hjelp med strømbrudd, så finnes det over 500 elektrikerbedrifter i hovedstaden." : kommune.kortTekst}</p>
+              <p className="text-body-md text-secondary-600 mb-4">{isOslo ? "Trenger du elektriker i Oslo? Vi hjelper deg å finne riktig fagperson til jobben. Enten det gjelder installasjon av elbillader, oppgradering av sikringsskap, feilsøking av strøm eller akutt hjelp med strømbrudd, så finnes det over 500 elektrikerbedrifter i hovedstaden." : isBergen ? "Trenger du elektriker i Bergen? Fra trehusbebyggelsen i Sandviken til nye prosjekter på Damsgård – vi kobler deg med autoriserte elektrikere i hele Bergen. 208 registrerte bedrifter gir deg gode muligheter til å sammenligne pris og kvalitet." : kommune.kortTekst}</p>
               {antallBedrifter > 0 && (
                 <div className="bg-secondary-900 text-white rounded-12 px-4 py-3 mb-5 inline-flex items-center gap-3">
                   <span className="font-display font-extrabold text-heading-lg text-primary-400">{antallBedrifter}</span>
@@ -130,47 +151,49 @@ export default async function KommuneSide({ params }: Props) {
           </div></section>
         )}
 
-        {/* ═══ STICKY TOC (Oslo only, desktop) ═══ */}
-        {isOslo && <OsloTableOfContents />}
+        {/* ═══ STICKY TOC (rich cities, desktop) ═══ */}
+        {isRichCity && <OsloTableOfContents />}
 
         {/* ═══ HOVEDINNHOLD ═══ */}
         <section className="section-white py-8 sm:py-12"><div className="container-site max-w-4xl">
 
-          {isOslo ? (<>
+          {isRichCity && cityConfig ? (<>
             {/* ═══════════════════════════════════════════
-                OSLO: RICH INTERACTIVE ARTICLE
+                RICH CITY ARTICLE (Oslo, Bergen, ...)
                 2500+ ord med visuelle elementer
             ═══════════════════════════════════════════ */}
 
             <div className="max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i Oslo – komplett oversikt</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i {kommune.navn} – komplett oversikt</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
                 <p>En elektriker utfører alt arbeid knyttet til elektriske installasjoner i boliger, næringsbygg og industri. I Norge er det lovpålagt at alt arbeid på fast elektrisk anlegg utføres av autorisert elektriker registrert hos Direktoratet for samfunnssikkerhet og beredskap (DSB). Dette gjelder alt fra installasjon av en ny stikkontakt til komplett oppgradering av et helt elektrisk anlegg.</p>
-                <p>Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.</p>
+                {isOslo && <p>Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.</p>}
+                {isBergen && <p>Bergen har spesielle utfordringer knyttet til eldre trehusbebyggelse, høy nedbør og fuktbelastning som stiller ekstra krav til elektriske anlegg. Riktig vedlikehold og oppgradering er avgjørende for brannsikkerhet og trygg strømforsyning.</p>}
               </div>
 
-              <FactBox>Oslo er Norges klart største marked for elektrikertjenester med 543 registrerte bedrifter og over 17 000 sysselsatte. Konkurransen er høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet.</FactBox>
+              <FactBox>{kommune.navn} har {antallBedrifter} registrerte elektrikerbedrifter under næringskode 43.210. {isOslo ? "Med over 17 000 sysselsatte er konkurransen høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet." : isBergen ? "Med over 1 500 sysselsatte er Bergen Vestlandets klart største marked for elektrotjenester." : ""}</FactBox>
             </div>
 
             {/* ── TJENESTER: Interactive grid ── */}
             <div id="tjenester" className="scroll-mt-24 mt-12">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2 max-w-prose mx-auto">Elektrikertjenester i Oslo</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2 max-w-prose mx-auto">Elektrikertjenester i {kommune.navn}</h2>
               <p className="text-body-sm text-secondary-500 mb-6 max-w-prose mx-auto">Klikk på en tjeneste for å se mer informasjon og bestille tilbud.</p>
-              <OsloTjenesterGrid />
+              <CityTjenesterGrid tjenester={cityConfig.tjenester} />
             </div>
 
             {/* ── ELBILLADER ── */}
             <div id="elbillader" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Installere ladeboks i Oslo</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Installere ladeboks i {kommune.navn}</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                <p>Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.</p>
+                {isOslo && <p>Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.</p>}
+                {isBergen && <p>Bergen har en raskt voksende elbilpark, og hjemmelading er den mest praktiske løsningen. Med bratt terreng og mange borettslag har Bergen spesielle utfordringer knyttet til kabelføring og lastbalansering. En autorisert elektriker sørger for trygg installasjon.</p>}
               </div>
 
               <ChecklistBox title="Krav til installasjon" items={[
                 "Ladeboksen må monteres av autorisert elektriker",
                 "Anlegget må ha tilstrekkelig kapasitet (minimum 32A kurs for 7,4 kW lading)",
                 "Det skal installeres egen jordfeilbryter type B",
-                "Arbeidet skal meldes til Elvia (netteier i Oslo)",
+                `Arbeidet skal meldes til ${cityConfig.netteier} (netteier i ${kommune.navn})`,
                 "For borettslag og sameier kreves styremøtevedtak og ofte fellesløsning med lastbalansering",
               ]} />
 
@@ -179,43 +202,47 @@ export default async function KommuneSide({ params }: Props) {
               </AlertBox>
 
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                <p>Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet. Oppgradering av hovedsikring eller inntak kommer i tillegg.</p>
+                {isOslo && <p>Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet.</p>}
+                {isBergen && <p>Priser i Bergen: enkel installasjon i enebolig koster fra 10 000 kr. Installasjon i borettslag med lang kabelføring koster mellom 18 000 og 30 000 kr per enhet. Mange eldre borettslag i Bergen trenger oppgradering av hovedsikring i tillegg.</p>}
               </div>
             </div>
 
             {/* ── DØGNVAKT: Emergency cards ── */}
             <div id="dognvakt" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Døgnvakt elektriker i Oslo</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Døgnvakt elektriker i {kommune.navn}</h2>
               <p className="text-body-sm text-secondary-500 mb-4">Noen elektriske problemer kan ikke vente. Klikk for detaljer og handlingsråd.</p>
               <OsloEmergencyCards />
             </div>
 
-            {/* ── VANLIGE PROBLEMER: Interactive diagnosis cards ── */}
+            {/* ── VANLIGE PROBLEMER ── */}
             <div id="problemer" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Vanlige elektriske problemer i Oslo</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Vanlige elektriske problemer i {kommune.navn}</h2>
               <p className="text-body-sm text-secondary-500 mb-4">Klikk på et problem for å se årsak og anbefalt løsning.</p>
               <OsloProblemCards />
             </div>
 
             {/* ── PRISER: Visual interactive table ── */}
             <div id="priser" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Pris elektriker i Oslo – prisguide 2026</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Pris elektriker i {kommune.navn} – prisguide 2026</h2>
               <p className="text-body-sm text-secondary-500 mb-1">Hold musen over en rad for å se prisintervallet visuelt.</p>
-              <OsloPriceTable />
+              <CityPriceTable priser={cityConfig.priser} cityName={kommune.navn} />
             </div>
 
             {/* ── MARKED: Chart + data visualization ── */}
             <div id="marked" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
-              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Markedet for elektrikertjenester i Oslo</h2>
+              <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Markedet for elektrikertjenester i {kommune.navn}</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                <p>Oslo er Norges suverent største marked for elektrikertjenester. Bransjen spenner fra store nasjonale entreprenører som Bravida, GK Norge og Caverion med hovedkontor i Oslo, til lokale spesialister i hver bydel.</p>
+                {isOslo && <p>Oslo er Norges suverent største marked for elektrikertjenester. Bransjen spenner fra store nasjonale entreprenører som Bravida, GK Norge og Caverion med hovedkontor i Oslo, til lokale spesialister i hver bydel.</p>}
+                {isBergen && <p>Bergen er Vestlandets desidert største marked for elektrikertjenester og Norges nest største totalt sett. Bransjen spenner fra store regionale aktører som AF Elkraft og BMO Elektro til spesialiserte lokale firmaer i hver bydel.</p>}
               </div>
-              <OsloMarketChart />
+              <CityMarketChart data={cityConfig.market} cityName={kommune.navn} />
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4 mt-4">
-                <p>Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.</p>
+                {isOslo && <p>Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.</p>}
+                {isBergen && <p>Bransjen i Bergen vokser raskt. 91 bedrifter er stiftet de siste fem årene, og 25 nye ble registrert i 2025 alene. Samtidig har 51 bedrifter over 20 års erfaring, med Bergen Elektroservice (grunnlagt 1985) som en av de eldste aktive.</p>}
               </div>
 
-              <FactBox emoji="📈">Flest bedrifter holder til i Alna og Grorud (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.</FactBox>
+              {isOslo && <FactBox emoji="📈">Flest bedrifter holder til i Alna og Grorud (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.</FactBox>}
+              {isBergen && <FactBox emoji="🌧️">Bergens klima med høy nedbør og fuktighet gir ekstra utfordringer for elektriske anlegg. Regelmessig elkontroll er viktigere her enn i mange andre norske byer. Flest bedrifter holder til i Åsane og Arna (82 bedrifter).</FactBox>}
             </div>
 
           </>) : (<>
@@ -230,19 +257,19 @@ export default async function KommuneSide({ params }: Props) {
           </>)}
         </div></section>
 
-        {/* ═══ BEDRIFTSOVERSIKT (kun Oslo) ═══ */}
-        {isOslo && (
+        {/* ═══ BEDRIFTSOVERSIKT (rich cities) ═══ */}
+        {isRichCity && bedrifterData.length > 0 && (
           <section id="bedrifter" className="scroll-mt-24 section-subtle py-8 sm:py-12" aria-labelledby="bedrifter-heading">
             <div className="container-site max-w-4xl">
-              <h2 id="bedrifter-heading" className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Elektrikerbedrifter i Oslo – komplett liste</h2>
+              <h2 id="bedrifter-heading" className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Elektrikerbedrifter i {kommune.navn} – komplett liste</h2>
               <p className="text-body-sm text-secondary-500 mb-6">Alle {antallBedrifter} bedrifter registrert under næringskode 43.210 i Brønnøysundregistrene. Offentlig tilgjengelig markedsinformasjon. Bedriftene er ikke tilknyttet Elspesialisten.</p>
-              <BedriftOversikt bedrifter={OSLO_BEDRIFTER} kommune="Oslo" />
+              <BedriftOversikt bedrifter={bedrifterData} kommune={kommune.navn} />
             </div>
           </section>
         )}
 
         {/* ═══ FAQ ═══ */}
-        <section id="faq" className={`scroll-mt-24 ${isOslo ? "section-white" : "section-subtle"} py-8 sm:py-12`}>
+        <section id="faq" className={`scroll-mt-24 ${isRichCity ? "section-white" : "section-subtle"} py-8 sm:py-12`}>
           <div className="container-site max-w-prose">
             <FAQ items={faqItems} tittel={`Vanlige spørsmål om elektriker i ${kommune.navn}`} showSchema={false} />
           </div>
@@ -250,7 +277,7 @@ export default async function KommuneSide({ params }: Props) {
 
         {/* ═══ ELEKTRIKER I NÆRHETEN ═══ */}
         {relatertKommuner.length > 0 && (
-          <section className={`${isOslo ? "section-subtle" : "section-white"} py-8 sm:py-10`}>
+          <section className={`${isRichCity ? "section-subtle" : "section-white"} py-8 sm:py-10`}>
             <div className="container-site">
               <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-2">Elektriker i nærheten av {kommune.navn}</h2>
               <p className="text-body-sm text-secondary-500 mb-5">Finner du ikke det du leter etter? Se elektrikere i nærliggende kommuner i {kommune.fylke}.</p>
