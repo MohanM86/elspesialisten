@@ -216,11 +216,71 @@ export const BERGEN_CONFIG: CityConfig = {
   },
 };
 
+/* ═══════════════════════════════════════
+   TRONDHEIM CONFIG
+   ═══════════════════════════════════════ */
+export const TRONDHEIM_CONFIG: CityConfig = {
+  slug: "trondheim",
+  navn: "Trondheim",
+  netteier: "Tensio",
+  tjenester: [
+    { id: "stikkontakt", tittel: "Stikkontakter og brytere", pris: "1 300 – 3 000", beskrivelse: "Eldre murgårder i Midtbyen og Bakklandet har ofte begrenset antall stikkontakter og utdatert kabling.", color: "from-blue-500/10 to-blue-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "sikringsskap", tittel: "Oppgradering sikringsskap", pris: "20 000 – 38 000", beskrivelse: "Mange boliger fra Lerkendal til Ila har sikringsskap fra 1960–80-tallet som bør oppgraderes for brannsikkerhet.", color: "from-orange-500/10 to-orange-600/5", href: "/tjenester/bytte-sikringsskap" },
+    { id: "elkontroll", tittel: "Elkontroll bolig", pris: "2 500 – 5 000", beskrivelse: "Systematisk gjennomgang av hele anlegget. Spesielt viktig i studentbyen Trondheim med mange utleieboliger.", color: "from-green-500/10 to-green-600/5", href: "/tjenester/elkontroll" },
+    { id: "spotter", tittel: "Spotter og belysning", pris: "700 – 1 300 / punkt", beskrivelse: "Med mørketid fra oktober til mars er god innendørsbelysning ekstra viktig i Trondheim.", color: "from-yellow-500/10 to-yellow-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "oppgradering", tittel: "Oppgradering anlegg", pris: "65 000 – 230 000", beskrivelse: "Full oppgradering med nytt skap, nye kurser og kabling. Leilighet fra 65 000, enebolig fra 95 000.", color: "from-purple-500/10 to-purple-600/5", href: "/guider/hva-koster-elektriker" },
+    { id: "feilsoking", tittel: "Feilsøking strøm", pris: "1 600 – 4 000", beskrivelse: "Kulde og temperatursvingninger i Trondheim kan gi ekstra belastning på eldre anlegg og forårsake feil.", color: "from-red-500/10 to-red-600/5", href: "/tjenester/feilsoking-strom" },
+    { id: "smarthus", tittel: "Smarthus installasjon", pris: "10 000 – 100 000", beskrivelse: "Teknologibyen Trondheim har høy etterspørsel etter smarthus. NTNU-miljøet driver innovasjon innen energistyring.", color: "from-cyan-500/10 to-cyan-600/5", href: "/tjenester/smarthus-installasjon" },
+    { id: "renovering", tittel: "Renovering anlegg", pris: "Varierer", beskrivelse: "Ved oppussing av bad eller kjøkken må el-anlegget oppdateres. Aktuelt i eldre trehus og murgårder i sentrum.", color: "from-amber-500/10 to-amber-600/5", href: "/guider/hva-koster-elektriker" },
+  ],
+  emergencies: SHARED_EMERGENCIES,
+  problemer: SHARED_PROBLEMS,
+  priser: [
+    { tjeneste: "Elektriker timepris", prisMin: 750, prisMax: 1200, enhet: "per time" },
+    { tjeneste: "Utrykningsgebyr", prisMin: 450, prisMax: 1300, enhet: "per oppdrag" },
+    { tjeneste: "Installasjon stikkontakt", prisMin: 1300, prisMax: 3000, enhet: "per punkt" },
+    { tjeneste: "Montering spotter", prisMin: 700, prisMax: 1300, enhet: "per punkt" },
+    { tjeneste: "Oppgradering sikringsskap", prisMin: 20000, prisMax: 38000, enhet: "per prosjekt", popular: true },
+    { tjeneste: "Installasjon elbillader", prisMin: 9000, prisMax: 28000, enhet: "per installasjon", popular: true },
+    { tjeneste: "Elkontroll bolig", prisMin: 2500, prisMax: 5000, enhet: "per kontroll" },
+    { tjeneste: "Feilsøking strøm", prisMin: 1600, prisMax: 4000, enhet: "per oppdrag" },
+    { tjeneste: "Smarthus grunnpakke", prisMin: 10000, prisMax: 40000, enhet: "per prosjekt" },
+    { tjeneste: "Komplett oppgradering (leilighet)", prisMin: 65000, prisMax: 150000, enhet: "per prosjekt" },
+  ],
+  market: {
+    total: 139,
+    selskapsform: [
+      { label: "Aksjeselskap", value: 88, color: "#f97316" },
+      { label: "Enkeltpersonfirma", value: 46, color: "#fbbf24" },
+      { label: "NUF", value: 1, color: "#94a3b8" },
+      { label: "Øvrige", value: 4, color: "#cbd5e1" },
+    ],
+    topBedrifter: [
+      { label: "Vintervoll", value: 221, color: "#f97316" },
+      { label: "Fjeldseth", value: 142, color: "#fb923c" },
+      { label: "Elteam", value: 102, color: "#fdba74" },
+      { label: "Energipartner", value: 98, color: "#fed7aa" },
+      { label: "ON Energi", value: 85, color: "#ffedd5" },
+    ],
+    omrader: [
+      { label: "Trondheim sentrum (70xx)", value: 134, color: "#f97316" },
+      { label: "Byneset / Klæbu (75xx)", value: 5, color: "#fb923c" },
+    ],
+    bottomStats: [
+      { v: "139", l: "Registrerte bedrifter" },
+      { v: "1 261", l: "Sysselsatte i bransjen" },
+      { v: "12", l: "Nye bedrifter i 2025" },
+      { v: "1960", l: "Eldste aktivt firma" },
+    ],
+  },
+};
+
 /* ═══ LOOKUP ═══ */
 export function getCityConfig(slug: string): CityConfig | null {
   switch (slug) {
     case "oslo": return OSLO_CONFIG;
     case "bergen": return BERGEN_CONFIG;
+    case "trondheim": return TRONDHEIM_CONFIG;
     default: return null;
   }
 }
