@@ -14,19 +14,13 @@ import FAQ from "@/components/ui/FAQ";
 import { TJENESTER } from "@/data/tjenester";
 import { KOMMUNER } from "@/data/kommuner";
 import { buildLocalBusinessSchema } from "@/lib/utils";
+import AnimatedStatsBar from "@/components/ui/AnimatedStatsBar";
 
 export const metadata: Metadata = {
   title: "Finn sertifisert elektriker i din kommune – Rask og enkel tilbudsinnhenting",
   description: "Norges ledende plattform for elektriker og elektrotjenester. Elbillader, sikringsskap, smarthus og mer. Gratis og uforpliktende tilbud fra sertifiserte elektrikere i hele Norge.",
   alternates: { canonical: "https://elspesialisten.no" },
 };
-
-const STATS = [
-  { verdi: "340+", label: "Kommuner" },
-  { verdi: "11", label: "Fylker" },
-  { verdi: "24t", label: "Responstid" },
-  { verdi: "100%", label: "Autoriserte" },
-];
 
 const TJENESTE_IKONER: Record<string, React.ElementType> = {
   elbillader: BatteryCharging, sikringsskap: LayoutGrid, varmekabler: Thermometer,
@@ -96,19 +90,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ═══ STATS (mørk bar) ═══ */}
-        <section className="bg-secondary-900" aria-label="Nøkkeltall">
-          <div className="container-site py-4 sm:py-5">
-            <div className="grid grid-cols-4 gap-1">
-              {STATS.map(({ verdi, label }) => (
-                <div key={label} className="text-center">
-                  <div className="font-display font-extrabold text-heading-md sm:text-display-lg text-primary-400">{verdi}</div>
-                  <div className="text-[0.65rem] sm:text-caption text-secondary-400 uppercase tracking-wider">{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* ═══ STATS (animert) ═══ */}
+        <AnimatedStatsBar />
 
         {/* ═══ TJENESTER (2 kolonne mobil) ═══ */}
         <section className="section-white py-8 sm:py-14" aria-labelledby="tjenester-heading">
