@@ -45,7 +45,6 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: "nb_NO", url: "https://elspesialisten.no", siteName: "Elspesialisten", title: "Elspesialisten – Finn sertifisert elektriker i din kommune", description: "Norges ledende plattform for elektriker og elektrotjenester. Gratis tilbud fra sertifiserte elektrikere i hele Norge.", images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Elspesialisten – Norges elektrikerplattform" }] },
   twitter: { card: "summary_large_image", title: "Elspesialisten – Finn sertifisert elektriker i din kommune", description: "Norges ledende plattform for elektriker og elektrotjenester.", images: ["/og-image.jpg"] },
   alternates: { canonical: "https://elspesialisten.no" },
-  verification: { google: "din-google-verification-kode" },
 };
 
 export const viewport: Viewport = {

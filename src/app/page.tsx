@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Zap, Shield, Clock, Star, ChevronRight, Phone, CheckCircle, ArrowRight, MapPin, Award, Users } from "lucide-react";
+import {
+  Zap, Shield, Clock, Star, ChevronRight, Phone, CheckCircle, ArrowRight,
+  MapPin, Award, BatteryCharging, LayoutGrid, Thermometer,
+  Lightbulb, Wifi, AlertTriangle,
+} from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import StickyMobileCTA from "@/components/layout/StickyMobileCTA";
@@ -9,7 +13,7 @@ import ElladerKalkulator from "@/components/calculators/ElladerKalkulator";
 import FAQ from "@/components/ui/FAQ";
 import { TJENESTER } from "@/data/tjenester";
 import { KOMMUNER } from "@/data/kommuner";
-import { formatPrisIntervall, buildLocalBusinessSchema } from "@/lib/utils";
+import { buildLocalBusinessSchema } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Finn sertifisert elektriker i din kommune – Rask og enkel tilbudsinnhenting",
@@ -18,23 +22,28 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { verdi: "340+", label: "Kommuner dekket", suffix: "" },
-  { verdi: "11", label: "Fylker i Norge", suffix: "" },
-  { verdi: "24t", label: "Maks responstid", suffix: "" },
-  { verdi: "100%", label: "DSB autoriserte", suffix: "" },
+  { verdi: "340+", label: "Kommuner" },
+  { verdi: "11", label: "Fylker" },
+  { verdi: "24t", label: "Responstid" },
+  { verdi: "100%", label: "Autoriserte" },
 ];
 
+const TJENESTE_IKONER: Record<string, React.ElementType> = {
+  elbillader: BatteryCharging, sikringsskap: LayoutGrid, varmekabler: Thermometer,
+  belysning: Lightbulb, smarthus: Wifi, akutt: AlertTriangle, elkontroll: Shield, feilsoking: Zap,
+};
+
 const TRUST_POINTS = [
-  { ikkon: Shield, tittel: "100% autoriserte elektrikere", tekst: "Alle elektrikere er DSB godkjente og har gyldig autorisasjon." },
-  { ikkon: Clock, tittel: "Svar innen 24 timer", tekst: "Vi matcher deg med rett elektriker og du får tilbud raskt." },
-  { ikkon: Star, tittel: "Gratis og uforpliktende", tekst: "Det koster deg ingenting å innhente tilbud via Elspesialisten." },
-  { ikkon: Award, tittel: "Garantert kvalitet", tekst: "Alle oppdrag utføres etter NS 3700 og gjeldende forskrifter." },
+  { ikkon: Shield, tittel: "Kun autoriserte", tekst: "DSB godkjente elektrikere" },
+  { ikkon: Clock, tittel: "Svar innen 24t", tekst: "Rask kontakt med lokal elektriker" },
+  { ikkon: Star, tittel: "Helt gratis", tekst: "Uforpliktende tilbud" },
+  { ikkon: Award, tittel: "Kvalitetssikret", tekst: "Etter gjeldende forskrifter" },
 ];
 
 const PROSESS_STEG = [
-  { steg: "1", tittel: "Send forespørsel", tekst: "Fyll ut skjemaet med hva du trenger hjelp med, postnummer og kontaktinfo. Tar under ett minutt." },
-  { steg: "2", tittel: "Vi finner elektriker", tekst: "Vi matcher deg med en autorisert elektriker i ditt område basert på oppdragstype og tilgjengelighet." },
-  { steg: "3", tittel: "Motta tilbud", tekst: "Elektriker kontakter deg innen 24 timer med et konkret og uforpliktende tilbud. Du velger selv om du vil gå videre." },
+  { steg: "1", tittel: "Send forespørsel", tekst: "Fyll ut skjema med oppdragstype og postnummer." },
+  { steg: "2", tittel: "Vi finner elektriker", tekst: "Vi matcher deg med autorisert elektriker i ditt område." },
+  { steg: "3", tittel: "Motta tilbud", tekst: "Elektriker kontakter deg innen 24 timer med tilbud." },
 ];
 
 const HOMEPAGE_FAQ = [
@@ -55,185 +64,174 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
       <Header />
       <main id="main-content">
+
+        {/* ═══ HERO ═══ */}
         <section className="relative overflow-hidden section-gradient hero-pattern" aria-labelledby="hero-heading">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" aria-hidden />
-          <div className="container-site py-16 sm:py-20 lg:py-24 relative">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-              <div className="max-w-2xl">
-                <div className="badge-primary mb-5 animate-fade-in"><Zap className="w-3 h-3" aria-hidden />Norges ledende elektrikerplattform</div>
-                <h1 id="hero-heading" className="font-display font-extrabold text-display-2xl text-secondary-950 mb-5 text-balance animate-fade-up">
+          <div className="container-site py-8 sm:py-16 lg:py-20 relative">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+              <div>
+                <div className="badge-primary mb-3"><Zap className="w-3 h-3" aria-hidden />Norges ledende elektrikerplattform</div>
+                <h1 id="hero-heading" className="font-display font-extrabold text-display-2xl text-secondary-950 mb-3 text-balance">
                   Finn sertifisert <span className="text-gradient-primary">elektriker</span> i din kommune
                 </h1>
-                <p className="text-body-lg text-secondary-600 mb-8 text-pretty animate-fade-up" style={{ animationDelay: "100ms" }}>
-                  Gratis og uforpliktende tilbud fra DSB godkjente elektrikere i hele Norge. Elbillader, sikringsskap, smarthus og alle elektriske tjenester.
+                <p className="text-body-md text-secondary-600 mb-5">
+                  Gratis og uforpliktende tilbud fra DSB godkjente elektrikere i hele Norge.
                 </p>
-                <ul className="space-y-3 mb-8 animate-fade-up" style={{ animationDelay: "150ms" }}>
-                  {["Svar innen 24 timer", "100% autoriserte fagpersoner", "Gratis og uforpliktende", "Dekker hele Norge"].map((punkt) => (
-                    <li key={punkt} className="flex items-center gap-2.5 text-body-md text-secondary-700"><CheckCircle className="w-5 h-5 text-success-600 flex-shrink-0" aria-hidden />{punkt}</li>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-5">
+                  {["Svar innen 24 timer", "Autoriserte fagfolk", "Gratis tilbud", "Hele Norge"].map((p) => (
+                    <div key={p} className="flex items-center gap-1.5 text-body-sm text-secondary-700">
+                      <CheckCircle className="w-4 h-4 text-success-600 flex-shrink-0" aria-hidden />{p}
+                    </div>
                   ))}
-                </ul>
-                <div className="flex flex-col sm:flex-row gap-3 animate-fade-up" style={{ animationDelay: "200ms" }}>
-                  <Link href="#tilbud" className="btn-primary-lg animate-pulse-cta">Få gratis tilbud <ArrowRight className="w-5 h-5" /></Link>
-                  <a href="tel:+4780000000" className="btn-phone text-cta-lg px-8 py-4 rounded-12"><Phone className="w-5 h-5" aria-hidden />Ring oss nå</a>
                 </div>
-                <div className="flex items-center gap-3 mt-7 animate-fade-up" style={{ animationDelay: "250ms" }}>
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-success-600" aria-hidden />
-                    <span className="text-body-sm text-secondary-600">Kun <strong className="text-secondary-900">DSB autoriserte</strong> elektrikere i hele Norge</span>
-                  </div>
+                <div className="flex gap-3 mb-2">
+                  <Link href="#tilbud" className="btn-primary flex-1 sm:flex-none justify-center text-cta-md sm:text-cta-lg px-6 sm:px-8 py-3.5 sm:py-4 rounded-12 animate-pulse-cta">Få gratis tilbud <ArrowRight className="w-5 h-5" /></Link>
+                  <a href="tel:+4780000000" className="btn-phone px-5 py-3.5 rounded-12 hidden sm:inline-flex"><Phone className="w-4 h-4" aria-hidden />Ring oss</a>
                 </div>
               </div>
-              <div id="tilbud" className="animate-slide-in-right" style={{ animationDelay: "100ms" }}>
-                <div className="mb-4">
-                  <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-1">Bestill gratis tilbud</h2>
-                  <p className="text-body-sm text-secondary-500">Fyll ut skjemaet, vi kobler deg med rett elektriker</p>
-                </div>
+              <div id="tilbud">
                 <LeadForm kilde="forside-hero" />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="section-white border-y border-neutral-200" aria-label="Nøkkeltall">
-          <div className="container-site py-10">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-neutral-200">
-              {STATS.map(({ verdi, label, suffix }) => (
-                <div key={label} className="text-center lg:px-8">
-                  <div className="font-display font-extrabold text-display-xl text-primary-600 mb-1 whitespace-nowrap">{verdi}{suffix && <span className="text-display-lg text-secondary-400">{suffix}</span>}</div>
-                  <div className="text-body-sm text-secondary-500">{label}</div>
+        {/* ═══ STATS (mørk bar) ═══ */}
+        <section className="bg-secondary-900" aria-label="Nøkkeltall">
+          <div className="container-site py-4 sm:py-5">
+            <div className="grid grid-cols-4 gap-1">
+              {STATS.map(({ verdi, label }) => (
+                <div key={label} className="text-center">
+                  <div className="font-display font-extrabold text-heading-md sm:text-display-lg text-primary-400">{verdi}</div>
+                  <div className="text-[0.65rem] sm:text-caption text-secondary-400 uppercase tracking-wider">{label}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="section-subtle section-py" aria-labelledby="tjenester-heading">
+        {/* ═══ TJENESTER (2 kolonne mobil) ═══ */}
+        <section className="section-white py-8 sm:py-14" aria-labelledby="tjenester-heading">
           <div className="container-site">
-            <div className="text-center mb-12">
-              <div className="badge-accent mb-4 mx-auto"><Zap className="w-3 h-3" aria-hidden />Elektriske tjenester</div>
-              <h2 id="tjenester-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Alle elektriske tjenester</h2>
-              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Fra elbillader og sikringsskap til smarthus og akutt utrykning, vi dekker alle behov.</p>
+            <h2 id="tjenester-heading" className="font-display font-bold text-heading-xl sm:text-display-lg text-secondary-950 mb-1 text-center">Elektriske tjenester</h2>
+            <p className="text-body-sm text-secondary-500 mb-6 text-center">Alt fra elbillader til akutt hjelp</p>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 mb-6">
+              {populareTjenester.map((t) => {
+                const Ikon = TJENESTE_IKONER[t.id] || Zap;
+                return (
+                  <Link key={t.slug} href={`/tjenester/${t.slug}`} className="card p-3.5 sm:p-5 group">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-10 bg-primary-50 flex items-center justify-center mb-2.5 group-hover:bg-primary-100 transition-colors">
+                      <Ikon className="w-4 h-4 sm:w-5 sm:h-5 text-primary-500" aria-hidden />
+                    </div>
+                    <h3 className="font-display font-semibold text-[0.8rem] sm:text-heading-sm text-secondary-900 group-hover:text-primary-600 transition-colors leading-snug">{t.kortTittel}</h3>
+                    <div className="flex items-center gap-0.5 text-[0.7rem] text-primary-500 mt-1.5">Se priser <ChevronRight className="w-3 h-3" aria-hidden /></div>
+                  </Link>
+                );
+              })}
             </div>
-            <div className="grid grid-auto-fill-280 gap-5 mb-10">
-              {populareTjenester.map((tjeneste) => (
-                <Link key={tjeneste.slug} href={`/tjenester/${tjeneste.slug}`} className="card p-6 group">
-                  <div className="w-11 h-11 rounded-12 bg-primary-50 flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors"><Zap className="w-5 h-5 text-primary-500" aria-hidden /></div>
-                  <h3 className="font-display font-semibold text-heading-sm text-secondary-900 mb-2 group-hover:text-primary-600 transition-colors">{tjeneste.tittel}</h3>
-                  <p className="text-body-sm text-secondary-500 clamp-2 mb-4">{tjeneste.kortBeskrivelse}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-caption text-secondary-400">fra {formatPrisIntervall(tjeneste.prisMin, tjeneste.prisMin + 2000)}</span>
-                    <span className="flex items-center gap-1 text-label text-primary-600 group-hover:gap-2 transition-all">Les mer <ChevronRight className="w-3.5 h-3.5" aria-hidden /></span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center"><Link href="/tjenester" className="btn-secondary">Se alle tjenester <ChevronRight className="w-4 h-4" /></Link></div>
+            <div className="text-center"><Link href="/tjenester" className="btn-secondary text-body-sm">Alle tjenester <ChevronRight className="w-4 h-4" /></Link></div>
           </div>
         </section>
 
-        <section className="section-white section-py" aria-labelledby="kalk-heading">
+        {/* ═══ SLIK FUNGERER DET (mørk) ═══ */}
+        <section className="bg-secondary-900 py-8 sm:py-14" aria-labelledby="prosess-heading">
           <div className="container-site">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="badge-primary mb-4"><Zap className="w-3 h-3" aria-hidden />Priskalkulator</div>
-                <h2 id="kalk-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-5">Hva koster elbillader installasjon?</h2>
-                <p className="text-body-lg text-secondary-600 mb-6">Bruk vår gratis kalkulator og få et prisestimat på sekunder. Deretter kan du bestille gratis og uforpliktende tilbud fra elektrikere i ditt område.</p>
-                <ul className="space-y-3">
-                  {["Estimert pris for din situasjon","Basert på boligtype og avstand","Justert for type lader","Helt gratis å bruke"].map((p) => (
+            <h2 id="prosess-heading" className="font-display font-bold text-heading-xl sm:text-display-lg text-white mb-6 text-center">Slik fungerer det</h2>
+            <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-6">
+              {PROSESS_STEG.map((s) => (
+                <div key={s.steg} className="flex sm:flex-col items-start sm:items-center gap-3 sm:gap-0 sm:text-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary-500 text-white flex items-center justify-center font-display font-bold text-heading-md sm:text-heading-lg flex-shrink-0 sm:mb-3">{s.steg}</div>
+                  <div>
+                    <h3 className="font-display font-semibold text-body-sm sm:text-heading-sm text-white">{s.tittel}</h3>
+                    <p className="text-caption sm:text-body-sm text-secondary-400 mt-0.5">{s.tekst}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-6 sm:mt-8">
+              <Link href="#tilbud" className="btn bg-primary-500 text-white text-cta-md px-7 py-3 rounded-12 hover:bg-primary-600 shadow-cta">Kom i gang <ArrowRight className="w-4 h-4" /></Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ KALKULATOR ═══ */}
+        <section className="section-subtle py-8 sm:py-14" aria-labelledby="kalk-heading">
+          <div className="container-site">
+            <h2 id="kalk-heading" className="font-display font-bold text-heading-xl sm:text-display-lg text-secondary-950 mb-1 text-center lg:hidden">Beregn pris på elbillader</h2>
+            <p className="text-body-sm text-secondary-500 mb-5 text-center lg:hidden">Gratis kalkulator, svar på sekunder</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div className="hidden lg:block">
+                <div className="badge-primary mb-3"><Zap className="w-3 h-3" aria-hidden />Priskalkulator</div>
+                <h2 className="font-display font-bold text-display-xl text-secondary-950 mb-3">Hva koster elbillader?</h2>
+                <p className="text-body-md text-secondary-600 mb-5">Bruk vår gratis kalkulator og få prisestimat på sekunder.</p>
+                <ul className="space-y-2">
+                  {["Tilpasset din boligtype","Basert på avstand til sikringsskap","Helt gratis å bruke"].map((p) => (
                     <li key={p} className="flex items-center gap-2 text-body-sm text-secondary-700"><CheckCircle className="w-4 h-4 text-success-600 flex-shrink-0" aria-hidden />{p}</li>
                   ))}
                 </ul>
-                <div className="mt-8 flex gap-3"><Link href="/kalkulator" className="btn-secondary">Se alle kalkulatorer <ChevronRight className="w-4 h-4" /></Link></div>
               </div>
-              <div><ElladerKalkulator /></div>
+              <ElladerKalkulator />
             </div>
           </div>
         </section>
 
-        <section className="section-subtle section-py" aria-labelledby="trust-heading">
+        {/* ═══ TILLIT (kompakt 2x2 grid) ═══ */}
+        <section className="section-white py-8 sm:py-14" aria-labelledby="trust-heading">
           <div className="container-site">
-            <div className="text-center mb-12">
-              <h2 id="trust-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Hvorfor velge Elspesialisten?</h2>
-              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Vi gjør det enkelt å finne riktig elektriker, trygt, raskt og kostnadsfritt.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <h2 id="trust-heading" className="font-display font-bold text-heading-xl sm:text-display-lg text-secondary-950 mb-6 text-center">Hvorfor Elspesialisten?</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
               {TRUST_POINTS.map(({ ikkon: Icon, tittel, tekst }) => (
-                <div key={tittel} className="trust-box rounded-16 hover:shadow-card-lg transition-shadow">
-                  <div className="trust-icon-wrap flex-shrink-0"><Icon className="w-5 h-5 text-primary-500" aria-hidden /></div>
-                  <div>
-                    <h3 className="font-display font-semibold text-heading-sm text-secondary-900 mb-1">{tittel}</h3>
-                    <p className="text-body-sm text-secondary-500">{tekst}</p>
+                <div key={tittel} className="bg-neutral-50 rounded-16 p-3.5 sm:p-5 text-center">
+                  <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-2">
+                    <Icon className="w-5 h-5 text-primary-500" aria-hidden />
                   </div>
+                  <h3 className="font-display font-semibold text-[0.8rem] sm:text-heading-sm text-secondary-900 mb-0.5">{tittel}</h3>
+                  <p className="text-[0.7rem] sm:text-caption text-secondary-500">{tekst}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="section-white section-py" aria-labelledby="prosess-heading">
+        {/* ═══ KOMMUNER (3 kolonner mobil) ═══ */}
+        <section className="section-subtle py-8 sm:py-14" aria-labelledby="kommuner-heading">
           <div className="container-site">
-            <div className="text-center mb-12">
-              <h2 id="prosess-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Slik fungerer det</h2>
-              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Tre enkle steg fra forespørsel til ferdig jobb.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {PROSESS_STEG.map((s) => (
-                <div key={s.steg} className="card p-6">
-                  <div className="w-12 h-12 rounded-full bg-primary-500 text-white flex items-center justify-center font-display font-bold text-heading-lg mb-4">{s.steg}</div>
-                  <h3 className="font-display font-semibold text-heading-sm text-secondary-900 mb-2">{s.tittel}</h3>
-                  <p className="text-body-sm text-secondary-500">{s.tekst}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section-subtle section-py" aria-labelledby="kommuner-heading">
-          <div className="container-site">
-            <div className="text-center mb-10">
-              <div className="badge-neutral mb-4 mx-auto"><MapPin className="w-3 h-3" aria-hidden />Lokal dekning</div>
-              <h2 id="kommuner-heading" className="font-display font-bold text-display-xl text-secondary-950 mb-4">Elektriker i din kommune</h2>
-              <p className="text-body-lg text-secondary-600 max-w-prose mx-auto">Vi formidler kontakt med sertifiserte elektrikere over hele Norge. Finn din kommune og be om tilbud.</p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
+            <h2 id="kommuner-heading" className="font-display font-bold text-heading-xl sm:text-display-lg text-secondary-950 mb-1 text-center">Finn elektriker lokalt</h2>
+            <p className="text-body-sm text-secondary-500 mb-5 text-center">Vi dekker hele Norge</p>
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5 sm:gap-2.5 mb-5">
               {populareKommuner.map((k) => (
-                <Link key={k.slug} href={`/kommune/${k.slug}`} className="card-flat px-4 py-3 text-center hover:border-primary-300 hover:bg-primary-50 transition-all group">
-                  <div className="text-label font-semibold text-secondary-800 group-hover:text-primary-600 transition-colors">{k.navn}</div>
-                  <div className="text-caption text-secondary-400 mt-0.5">{k.fylke}</div>
+                <Link key={k.slug} href={`/kommune/${k.slug}`} className="bg-white rounded-10 border border-neutral-200 px-2 py-2 text-center hover:border-primary-300 hover:bg-primary-50 transition-all group">
+                  <div className="text-[0.75rem] font-semibold text-secondary-800 group-hover:text-primary-600 transition-colors">{k.navn}</div>
                 </Link>
               ))}
             </div>
-            <div className="text-center"><Link href="/elektriker" className="btn-primary"><MapPin className="w-4 h-4" aria-hidden />Se alle kommuner <ChevronRight className="w-4 h-4" /></Link></div>
+            <div className="text-center"><Link href="/elektriker" className="btn-primary text-body-sm"><MapPin className="w-4 h-4" aria-hidden />Alle kommuner</Link></div>
           </div>
         </section>
 
-        <section className="section-white section-py" aria-labelledby="faq-main">
-          <div className="container-site">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              <div>
-                <div className="badge-primary mb-4">Vanlige spørsmål</div>
-                <h2 id="faq-main" className="font-display font-bold text-display-xl text-secondary-950 mb-5">Spørsmål om elektriker og priser</h2>
-                <p className="text-body-lg text-secondary-600 mb-6">Her svarer vi på de vanligste spørsmålene om elektriker, priser og prosessen.</p>
-                <Link href="/faq" className="btn-secondary">Se alle spørsmål <ChevronRight className="w-4 h-4" /></Link>
-              </div>
-              <FAQ items={HOMEPAGE_FAQ} tittel="" showSchema />
-            </div>
+        {/* ═══ FAQ (full bredde, kompakt) ═══ */}
+        <section className="section-white py-8 sm:py-14" aria-labelledby="faq-main">
+          <div className="container-site max-w-3xl">
+            <h2 id="faq-main" className="font-display font-bold text-heading-xl sm:text-display-lg text-secondary-950 mb-5 text-center">Vanlige spørsmål</h2>
+            <FAQ items={HOMEPAGE_FAQ} tittel="" showSchema />
+            <div className="text-center mt-5"><Link href="/faq" className="btn-secondary text-body-sm">Se alle spørsmål <ChevronRight className="w-4 h-4" /></Link></div>
           </div>
         </section>
 
-        <section className="section-subtle section-py-sm" aria-labelledby="cta-main">
+        {/* ═══ CTA ═══ */}
+        <section className="py-6 sm:py-10">
           <div className="container-site">
-            <div className="cta-block">
-              <div className="badge mx-auto mb-5 bg-white/20 text-white border-white/30"><Zap className="w-3 h-3" aria-hidden />Gratis og uforpliktende</div>
-              <h2 id="cta-main" className="font-display font-extrabold text-display-xl text-white mb-4 text-balance">Klar til å finne rett elektriker?</h2>
-              <p className="text-body-lg text-primary-100 mb-8 max-w-lg mx-auto">Fyll ut skjemaet og motta gratis tilbud fra sertifiserte elektrikere i ditt område, innen 24 timer.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="#tilbud" className="btn bg-white text-primary-600 text-cta-lg px-8 py-4 rounded-12 hover:bg-primary-50 shadow-card-xl">Få gratis tilbud nå <ArrowRight className="w-5 h-5" /></Link>
-                <a href="tel:+4780000000" className="btn border-2 border-white/50 text-white text-cta-lg px-8 py-4 rounded-12 hover:bg-white/10"><Phone className="w-5 h-5" aria-hidden />Ring oss</a>
+            <div className="cta-block py-8 sm:py-12 px-6">
+              <h2 className="font-display font-extrabold text-heading-xl sm:text-display-lg text-white mb-2 text-balance">Klar til å finne elektriker?</h2>
+              <p className="text-body-sm sm:text-body-md text-white/70 mb-5 max-w-md mx-auto">Gratis tilbud fra sertifiserte elektrikere, innen 24 timer.</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="#tilbud" className="btn bg-white text-primary-600 text-cta-md px-6 py-3.5 rounded-12 hover:bg-primary-50 shadow-card-xl justify-center">Få gratis tilbud <ArrowRight className="w-4 h-4" /></Link>
+                <a href="tel:+4780000000" className="btn border-2 border-white/40 text-white text-cta-md px-6 py-3.5 rounded-12 hover:bg-white/10 justify-center"><Phone className="w-4 h-4" aria-hidden />Ring oss</a>
               </div>
             </div>
           </div>
         </section>
+
       </main>
       <Footer />
       <StickyMobileCTA />

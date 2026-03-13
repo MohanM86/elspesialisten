@@ -24,9 +24,9 @@ const NAV_ITEMS = [
     label: "Priser",
     href: "/priser",
     children: [
-      { label: "Elektriker pris",          href: "/priser/elektriker-pris" },
-      { label: "Elbillader pris",          href: "/priser/elbillader-pris" },
-      { label: "Sikringsskap pris",        href: "/priser/sikringsskap-pris" },
+      { label: "Elektriker timepris",      href: "/guider/hva-koster-elektriker" },
+      { label: "Elbillader pris",          href: "/guider/elbillader-pris" },
+      { label: "Sikringsskap pris",        href: "/guider/sikringsskap-pris" },
     ],
   },
   {
