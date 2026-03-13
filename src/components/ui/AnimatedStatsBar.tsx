@@ -10,7 +10,7 @@ interface StatItem {
 
 const STATS: StatItem[] = [
   {
-    endValue: 340,
+    endValue: 357,
     suffix: "+",
     label: "Kommuner",
     ikon: (
@@ -20,7 +20,7 @@ const STATS: StatItem[] = [
     ),
   },
   {
-    endValue: 11,
+    endValue: 15,
     suffix: "",
     label: "Fylker",
     ikon: (
