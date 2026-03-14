@@ -16,6 +16,10 @@ import BedriftOversikt from "@/components/ui/BedriftOversikt";
 import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
 import { BERGEN_BEDRIFTER } from "@/data/bedrifter/bergen";
 import { TRONDHEIM_BEDRIFTER } from "@/data/bedrifter/trondheim";
+import { STAVANGER_BEDRIFTER } from "@/data/bedrifter/stavanger";
+import { KRISTIANSAND_BEDRIFTER } from "@/data/bedrifter/kristiansand";
+import { DRAMMEN_BEDRIFTER } from "@/data/bedrifter/drammen";
+import { FREDRIKSTAD_BEDRIFTER } from "@/data/bedrifter/fredrikstad";
 import OsloTableOfContents from "@/components/oslo/OsloTableOfContents";
 import CityTjenesterGrid from "@/components/city/CityTjenesterGrid";
 import CityMarketChart from "@/components/city/CityMarketChart";
@@ -92,6 +96,25 @@ const TRONDHEIM_FAQ = [
   { sporsmal: "Er det lovlig å bytte lyspærer og stikkontaktdeksler selv?", svar: "Du kan bytte lyspærer, sette inn støpsler og bytte deksel på stikkontakter og brytere. Alt annet arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette gjelder i hele Norge, også i Trondheim." },
 ];
 
+/* ═══ GENERERER FAQ FOR KONFIG-BYER (Stavanger, Kristiansand, Drammen, Fredrikstad) ═══ */
+function buildCityFAQ(navn: string, antall: number, cfg: { netteier: string; priser: { tjeneste: string; prisMin: number; prisMax: number }[] }) {
+  const p = (t: string) => cfg.priser.find((x) => x.tjeneste.includes(t));
+  const tim = p("timepris"); const sik = p("sikringsskap"); const lad = p("elbillader"); const elk = p("Elkontroll"); const spo = p("spotter"); const opp = p("oppgradering");
+  return [
+    { sporsmal: `Hva koster elektriker i ${navn}?`, svar: `Timeprisen for elektriker i ${navn} ligger mellom ${tim?.prisMin || 700} og ${tim?.prisMax || 1200} kr inkludert moms. Utrykningsgebyr kommer i tillegg. Innhent alltid minst tre skriftlige tilbud.` },
+    { sporsmal: `Hvor mange elektrikerbedrifter finnes i ${navn}?`, svar: `Det er ${antall} bedrifter registrert under næringskode 43.210 (elektrisk installasjonsarbeid) i ${navn} ifølge Brønnøysundregistrene.` },
+    { sporsmal: `Hvor raskt kan elektriker komme i ${navn}?`, svar: `Ved akutte situasjoner kan døgnvakt elektriker i ${navn} som regel være på plass innen 1 til 3 timer. For planlagte oppdrag bør du regne med 1 til 5 virkedager.` },
+    { sporsmal: `Hva koster det å bytte sikringsskap i ${navn}?`, svar: `Oppgradering av sikringsskap i ${navn} koster mellom ${sik?.prisMin || 20000} og ${sik?.prisMax || 38000} kr avhengig av antall kurser og boligens størrelse.` },
+    { sporsmal: `Kan jeg installere elbillader selv i ${navn}?`, svar: `Nei. All installasjon av ladeboks for elbil må utføres av autorisert elektriker. Elektrikeren melder arbeidet til ${cfg.netteier} (netteier i ${navn}). Installasjon koster typisk mellom ${lad?.prisMin || 9000} og ${lad?.prisMax || 28000} kr.` },
+    { sporsmal: `Hva koster montering av spotter i ${navn}?`, svar: `Montering koster mellom ${spo?.prisMin || 700} og ${spo?.prisMax || 1300} kr per punkt. For et rom med 6 til 8 spotter ligger totalprisen mellom ${(spo?.prisMin || 700) * 6} og ${(spo?.prisMax || 1300) * 8} kr.` },
+    { sporsmal: `Når trenger jeg elkontroll i ${navn}?`, svar: `Elkontroll anbefales hvert 5. år for boliger eldre enn 20 år, ved kjøp og salg, og ved forsikringskrav. I ${navn} koster en full elkontroll mellom ${elk?.prisMin || 2500} og ${elk?.prisMax || 5000} kr.` },
+    { sporsmal: `Hva gjør jeg ved strømbrudd i ${navn}?`, svar: `Sjekk først om problemet er lokalt. Sjekk sikringsskapet for utløste sikringer. Vedvarer problemet, kontakt ${cfg.netteier} (netteier i ${navn}) eller ring en døgnvakt elektriker.` },
+    { sporsmal: `Hva koster oppgradering av elektrisk anlegg i ${navn}?`, svar: `En full oppgradering i leilighet i ${navn} koster mellom ${opp?.prisMin || 65000} og ${opp?.prisMax || 145000} kr. For enebolig kan prisen bli høyere. Prisen inkluderer nytt sikringsskap, nye kurser og utskifting av eldre kabler.` },
+    { sporsmal: `Hvordan finner jeg en god elektriker i ${navn}?`, svar: `Sjekk at elektrikeren er registrert i DSBs Elvirksomhetsregister. Be om referanser og sammenlign alltid flere tilbud. En seriøs elektriker gir deg skriftlig tilbud med spesifisert materiell og arbeidskostnad.` },
+    { sporsmal: `Kan jeg gjøre elektrisk arbeid selv?`, svar: `Du kan bytte lyspærer og sette inn støpsler. Alt arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette gjelder i hele Norge, også i ${navn}.` },
+  ];
+}
+
 export default async function KommuneSide({ params }: Props) {
   const { slug } = await params;
   const kommune = getKommune(slug);
@@ -101,9 +124,14 @@ export default async function KommuneSide({ params }: Props) {
   const isOslo = slug === "oslo";
   const isBergen = slug === "bergen";
   const isTrondheim = slug === "trondheim";
-  const isRichCity = isOslo || isBergen || isTrondheim;
+  const isStavanger = slug === "stavanger";
+  const isKristiansand = slug === "kristiansand";
+  const isDrammen = slug === "drammen";
+  const isFredrikstad = slug === "fredrikstad";
+  const isRichCity = !!(getCityConfig(slug));
   const cityConfig = getCityConfig(slug);
-  const bedrifterData = isOslo ? OSLO_BEDRIFTER : isBergen ? BERGEN_BEDRIFTER : isTrondheim ? TRONDHEIM_BEDRIFTER : [];
+  const BEDRIFTER_MAP: Record<string, any[]> = { oslo: OSLO_BEDRIFTER, bergen: BERGEN_BEDRIFTER, trondheim: TRONDHEIM_BEDRIFTER, stavanger: STAVANGER_BEDRIFTER, kristiansand: KRISTIANSAND_BEDRIFTER, drammen: DRAMMEN_BEDRIFTER, fredrikstad: FREDRIKSTAD_BEDRIFTER };
+  const bedrifterData = BEDRIFTER_MAP[slug] || [];
 
   /* ─── Generic FAQ for non-Oslo ─── */
   const genericFAQ = [
@@ -114,7 +142,89 @@ export default async function KommuneSide({ params }: Props) {
     { sporsmal: `Kan jeg gjøre elektrisk arbeid selv?`, svar: `Du kan bytte lyspærer og sette inn støpsler. Alt arbeid på fast elektrisk installasjon krever autorisert elektriker. Dette gjelder i hele Norge, også i ${kommune.navn}.` },
   ];
 
-  const faqItems = isOslo ? OSLO_FAQ : isBergen ? BERGEN_FAQ : isTrondheim ? TRONDHEIM_FAQ : genericFAQ;
+  const faqItems = isOslo ? OSLO_FAQ : isBergen ? BERGEN_FAQ : isTrondheim ? TRONDHEIM_FAQ : (isRichCity && cityConfig) ? buildCityFAQ(kommune.navn, antallBedrifter, cityConfig) : genericFAQ;
+
+  /* ─── City-specific content strings ─── */
+  const CITY_CONTENT: Record<string, { hero: string; intro2: string; factExtra: string; laderIntro: string; laderPris: string; marketIntro: string; marketGrowth: string; factBottom: string; factEmoji: string }> = {
+    oslo: {
+      hero: "Trenger du elektriker i Oslo? Vi hjelper deg å finne riktig fagperson til jobben. Enten det gjelder installasjon av elbillader, oppgradering av sikringsskap, feilsøking av strøm eller akutt hjelp med strømbrudd, så finnes det over 500 elektrikerbedrifter i hovedstaden.",
+      intro2: "Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.",
+      factExtra: "Med over 17 000 sysselsatte er konkurransen høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet.",
+      laderIntro: "Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.",
+      laderPris: "Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet.",
+      marketIntro: "Oslo er Norges suverent største marked for elektrikertjenester. Bransjen spenner fra store nasjonale entreprenører som Bravida, GK Norge og Caverion med hovedkontor i Oslo, til lokale spesialister i hver bydel.",
+      marketGrowth: "Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.",
+      factBottom: "Flest bedrifter holder til i Alna og Grorud (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.",
+      factEmoji: "📈",
+    },
+    bergen: {
+      hero: "Trenger du elektriker i Bergen? Fra trehusbebyggelsen i Sandviken til nye prosjekter på Damsgård – vi kobler deg med autoriserte elektrikere i hele Bergen. 208 registrerte bedrifter gir deg gode muligheter til å sammenligne pris og kvalitet.",
+      intro2: "Bergen har spesielle utfordringer knyttet til eldre trehusbebyggelse, høy nedbør og fuktbelastning som stiller ekstra krav til elektriske anlegg. Riktig vedlikehold og oppgradering er avgjørende for brannsikkerhet og trygg strømforsyning.",
+      factExtra: "Med over 1 500 sysselsatte er Bergen Vestlandets klart største marked for elektrotjenester.",
+      laderIntro: "Bergen har en raskt voksende elbilpark, og hjemmelading er den mest praktiske løsningen. Med bratt terreng og mange borettslag har Bergen spesielle utfordringer knyttet til kabelføring og lastbalansering. En autorisert elektriker sørger for trygg installasjon.",
+      laderPris: "Priser i Bergen: enkel installasjon i enebolig koster fra 10 000 kr. Installasjon i borettslag med lang kabelføring koster mellom 18 000 og 30 000 kr per enhet. Mange eldre borettslag i Bergen trenger oppgradering av hovedsikring i tillegg.",
+      marketIntro: "Bergen er Vestlandets desidert største marked for elektrikertjenester og Norges nest største totalt sett. Bransjen spenner fra store regionale aktører som AF Elkraft og BMO Elektro til spesialiserte lokale firmaer i hver bydel.",
+      marketGrowth: "Bransjen i Bergen vokser raskt. 91 bedrifter er stiftet de siste fem årene, og 25 nye ble registrert i 2025 alene. Samtidig har 51 bedrifter over 20 års erfaring, med Bergen Elektroservice (grunnlagt 1985) som en av de eldste aktive.",
+      factBottom: "Bergens klima med høy nedbør og fuktighet gir ekstra utfordringer for elektriske anlegg. Regelmessig elkontroll er viktigere her enn i mange andre norske byer. Flest bedrifter holder til i Åsane og Arna (82 bedrifter).",
+      factEmoji: "🌧️",
+    },
+    trondheim: {
+      hero: "Trenger du elektriker i Trondheim? Fra murgårdene i Midtbyen til studentboligene på Moholt – vi kobler deg med autoriserte elektrikere i hele Trondheim. 139 registrerte bedrifter og over 1 200 ansatte i bransjen.",
+      intro2: "Trondheim er Norges teknologihovedstad med NTNU og SINTEF som drivkrefter for innovasjon. Byen har en blanding av eldre murgårder i Midtbyen, trehusbebyggelse på Bakklandet og moderne boligprosjekter på Brøset og Lade. Kulde og temperatursvingninger stiller ekstra krav til elektriske anlegg.",
+      factExtra: "Med over 1 200 sysselsatte er Trondheim Trøndelags klart største marked. NTNU-miljøet driver innovasjon innen smarthus og energistyring.",
+      laderIntro: "Trondheim har en av Norges høyeste elbiltettheter utenfor Oslo-regionen, og hjemmelading er den mest praktiske løsningen. Mange av byens borettslag på Flatåsen, Saupstad og Byåsen trenger fellesløsninger med lastbalansering. En autorisert elektriker sørger for trygg installasjon.",
+      laderPris: "Priser i Trondheim: enkel installasjon i enebolig koster fra 9 000 kr. Installasjon i borettslag med lang kabelføring koster mellom 16 000 og 28 000 kr per enhet. Arbeidet meldes til Tensio som er netteier i Trondheim.",
+      marketIntro: "Trondheim er Trøndelags desidert største marked for elektrikertjenester og Norges tredje største. Bransjen ledes av Vintervoll (221 ansatte), Fjeldseth (142 ansatte) og Elteam (102 ansatte), med en god blanding av store entreprenører og lokale spesialister.",
+      marketGrowth: "Bransjen i Trondheim vokser jevnt. 43 bedrifter er stiftet de siste fem årene, og 12 nye ble registrert i 2025. Samtidig har 33 bedrifter over 20 års erfaring, med Argon Elektro (grunnlagt 1960) som den eldste aktive elektrikerbedriften i byen.",
+      factBottom: "Trondheims teknologimiljø med NTNU og SINTEF gjør byen til et foregangsområde for smarthus og energieffektivisering. Nesten alle 139 bedrifter holder til i sentrale Trondheim (postnummer 70xx), med Heimdal og Tiller som populære næringsområder.",
+      factEmoji: "🎓",
+    },
+    stavanger: {
+      hero: "Trenger du elektriker i Stavanger? Fra Gamle Stavanger til Forus næringspark – vi kobler deg med autoriserte elektrikere i hele Stavanger. 101 registrerte bedrifter og over 1 000 ansatte i bransjen.",
+      intro2: "Stavanger er oljebyen med høy kjøpekraft og et aktivt boligmarked. Byen har en unik blanding av verneverdig trehusbebyggelse i sentrum og moderne næringsbygg på Forus. Kystklima med salt og fukt stiller ekstra krav til elektriske anlegg.",
+      factExtra: "Med over 1 000 sysselsatte er Stavanger Rogalands største marked. Høy kjøpekraft driver etterspørselen etter premium elektrotjenester.",
+      laderIntro: "Stavanger-regionen har høy elbiltetthet drevet av god økonomi og bevisste forbrukere. Mange eneboliger i Madla, Tasta og Hinna har garasje som egner seg godt for hjemmelading. En autorisert elektriker sørger for trygg installasjon.",
+      laderPris: "Priser i Stavanger: enkel installasjon i enebolig koster fra 10 000 kr. Installasjon i borettslag koster mellom 18 000 og 30 000 kr per enhet. Arbeidet meldes til Lnett som er netteier i Stavanger.",
+      marketIntro: "Stavanger er Rogalands klart største marked for elektrikertjenester. Bransjen ledes av Rønning Elektro (233 ansatte, grunnlagt 1967), Blu Electro (224 ansatte) og Rogaland Elektro (118 ansatte).",
+      marketGrowth: "Bransjen i Stavanger vokser jevnt. 36 bedrifter er stiftet de siste fem årene, og 6 nye ble registrert i 2025. 26 bedrifter har over 20 års erfaring, med Rønning Elektro (grunnlagt 1967) som den eldste aktive.",
+      factBottom: "De fleste bedrifter holder til i sentrale Stavanger (postnummer 40xx). Forus og Gausel er populære næringsområder. Oljenæringen skaper stabil etterspørsel etter elektrisk kompetanse.",
+      factEmoji: "🛢️",
+    },
+    kristiansand: {
+      hero: "Trenger du elektriker i Kristiansand? Fra Posebyen til Vågsbygd – vi kobler deg med autoriserte elektrikere i hele Kristiansand. 101 registrerte bedrifter dekker alle typer elektriske oppdrag.",
+      intro2: "Kristiansand er Sørlandets hovedstad med et aktivt boligmarked og mange fritidsboliger i nærområdet. Byen har eldre trehusbebyggelse i Posebyen og sentrum, og kystklima med salt og fukt som kan påvirke elektriske anlegg.",
+      factExtra: "Med nesten 700 sysselsatte er Kristiansand Agders klart største marked for elektrotjenester.",
+      laderIntro: "Kristiansand har en voksende elbilpark, og hjemmelading er den mest praktiske løsningen. Mange eneboliger i Vågsbygd, Sødal og Gimlekollen har gode forutsetninger for hjemmelader.",
+      laderPris: "Priser i Kristiansand: enkel installasjon i enebolig koster fra 9 000 kr. Installasjon i borettslag koster mellom 16 000 og 28 000 kr per enhet. Arbeidet meldes til Agder Energi Nett.",
+      marketIntro: "Kristiansand er Agders største marked for elektrikertjenester. Bransjen ledes av On & Offshore Services (158 ansatte), Elektroxperten (111 ansatte) og Avitell (110 ansatte, grunnlagt 1978).",
+      marketGrowth: "34 bedrifter er stiftet de siste fem årene, og 7 nye ble registrert i 2025. 26 bedrifter har over 20 års erfaring. Sommerbyen har også høy sesongetterspørsel knyttet til fritidsboliger.",
+      factBottom: "Alle 101 bedrifter holder til innenfor postnummerområde 46xx. Posebyen og Lund er populære områder for oppussingsprosjekter som krever elektriker.",
+      factEmoji: "☀️",
+    },
+    drammen: {
+      hero: "Trenger du elektriker i Drammen? Fra Bragernes til Konnerud – vi kobler deg med autoriserte elektrikere i hele Drammen. 104 registrerte bedrifter og over 1 000 ansatte i bransjen.",
+      intro2: "Drammen er en by i sterk vekst med massiv byfornyelse langs Drammenselva. Mange nye leilighetsprosjekter kombinert med eldre boligmasse fra etterkrigstiden på Konnerud og Åssiden skaper stor etterspørsel etter elektrikertjenester.",
+      factExtra: "Med over 1 000 sysselsatte er Drammen Buskeruds klart største marked. Byfornyelsen driver etterspørselen.",
+      laderIntro: "Drammen har en stor og voksende elbilpark drevet av nærhet til Oslo og gode pendlermuligheter. Mange eneboliger på Konnerud, Åssiden og Gulskogen har garasje for hjemmelading.",
+      laderPris: "Priser i Drammen: enkel installasjon i enebolig koster fra 9 000 kr. Installasjon i borettslag koster mellom 16 000 og 28 000 kr per enhet. Arbeidet meldes til Glitre Nett.",
+      marketIntro: "Drammen er Buskeruds klart største marked for elektrikertjenester. Bransjen ledes av Powertech (266 ansatte), Ingeniør Ivar Pettersen (236 ansatte) og Abicon Elektro (76 ansatte).",
+      marketGrowth: "34 bedrifter er stiftet de siste fem årene, og 10 nye ble registrert i 2025. 30 bedrifter har over 20 års erfaring, med AS Mjøndalen Installasjon (grunnlagt 1967) som den eldste aktive.",
+      factBottom: "Alle 104 bedrifter holder til innenfor postnummerområde 30xx. Byfornyelsen langs Drammenselva og nye prosjekter på Gulskogen og Brakerøya driver sterk vekst i bransjen.",
+      factEmoji: "🏗️",
+    },
+    fredrikstad: {
+      hero: "Trenger du elektriker i Fredrikstad? Fra Gamlebyen til Selbak – vi kobler deg med autoriserte elektrikere i hele Fredrikstad. 79 registrerte bedrifter dekker alle typer oppdrag.",
+      intro2: "Fredrikstad er Østfolds største by med en blanding av eldre industribebyggelse, etterkrigsboliger og nye prosjekter langs Glomma. Mange boliger fra 1950 til 1980 tallet har elektriske anlegg som trenger oppgradering.",
+      factExtra: "Med nesten 400 sysselsatte er Fredrikstad Østfolds største marked for elektrotjenester.",
+      laderIntro: "Fredrikstad har en voksende elbilpark, og mange eneboliger på Selbak, Lisleby og Gressvik har gode forutsetninger for hjemmelader med garasje eller carport.",
+      laderPris: "Priser i Fredrikstad: enkel installasjon i enebolig koster fra 8 000 kr. Installasjon i borettslag koster mellom 15 000 og 25 000 kr per enhet. Arbeidet meldes til Elvia som er netteier.",
+      marketIntro: "Fredrikstad er Østfolds største marked for elektrikertjenester. Bransjen ledes av Installatøren Fredrikstad (134 ansatte), Storm Elektro (107 ansatte) og ZK Elektro (34 ansatte).",
+      marketGrowth: "31 bedrifter er stiftet de siste fem årene, men bare 2 nye i 2025. 15 bedrifter har over 20 års erfaring, med Slevik Elektriske (grunnlagt 1991) som en av de mest etablerte.",
+      factBottom: "Alle 79 bedrifter holder til innenfor postnummerområde 16xx. Gamlebyen og Værste-området har mye oppussingsaktivitet som krever elektrikerkompetanse.",
+      factEmoji: "🏭",
+    },
+  };
+  const cc = CITY_CONTENT[slug];
 
   /* ─── JSON-LD Schemas ─── */
   const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqItems.map((f) => ({ "@type": "Question", name: f.sporsmal, acceptedAnswer: { "@type": "Answer", text: f.svar } })) };
@@ -138,7 +248,7 @@ export default async function KommuneSide({ params }: Props) {
             <div>
               <div className="badge-primary mb-3"><MapPin className="w-3 h-3" aria-hidden />{kommune.fylke}</div>
               <h1 id="kommune-hero" className="font-display font-extrabold text-display-xl text-secondary-950 mb-3 text-balance">Elektriker i <span className="text-gradient-primary">{kommune.navn}</span></h1>
-              <p className="text-body-md text-secondary-600 mb-4">{isOslo ? "Trenger du elektriker i Oslo? Vi hjelper deg å finne riktig fagperson til jobben. Enten det gjelder installasjon av elbillader, oppgradering av sikringsskap, feilsøking av strøm eller akutt hjelp med strømbrudd, så finnes det over 500 elektrikerbedrifter i hovedstaden." : isBergen ? "Trenger du elektriker i Bergen? Fra trehusbebyggelsen i Sandviken til nye prosjekter på Damsgård – vi kobler deg med autoriserte elektrikere i hele Bergen. 208 registrerte bedrifter gir deg gode muligheter til å sammenligne pris og kvalitet." : isTrondheim ? "Trenger du elektriker i Trondheim? Fra murgårdene i Midtbyen til studentboligene på Moholt – vi kobler deg med autoriserte elektrikere i hele Trondheim. 139 registrerte bedrifter og over 1 200 ansatte i bransjen." : kommune.kortTekst}</p>
+              <p className="text-body-md text-secondary-600 mb-4">{cc?.hero || kommune.kortTekst}</p>
               {antallBedrifter > 0 && (
                 <div className="bg-secondary-900 text-white rounded-12 px-4 py-3 mb-5 inline-flex items-center gap-3">
                   <span className="font-display font-extrabold text-heading-lg text-primary-400">{antallBedrifter}</span>
@@ -184,12 +294,10 @@ export default async function KommuneSide({ params }: Props) {
               <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Elektriker i {kommune.navn} – komplett oversikt</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
                 <p>En elektriker utfører alt arbeid knyttet til elektriske installasjoner i boliger, næringsbygg og industri. I Norge er det lovpålagt at alt arbeid på fast elektrisk anlegg utføres av autorisert elektriker registrert hos Direktoratet for samfunnssikkerhet og beredskap (DSB). Dette gjelder alt fra installasjon av en ny stikkontakt til komplett oppgradering av et helt elektrisk anlegg.</p>
-                {isOslo && <p>Du trenger elektriker når du skal installere elbillader, bytte sikringsskap, montere nye lyspunkt eller spotter, oppgradere det elektriske anlegget, installere smarthussystem, utføre elkontroll, eller når du opplever strømproblemer som jordfeil, kortslutning eller strømbrudd.</p>}
-                {isBergen && <p>Bergen har spesielle utfordringer knyttet til eldre trehusbebyggelse, høy nedbør og fuktbelastning som stiller ekstra krav til elektriske anlegg. Riktig vedlikehold og oppgradering er avgjørende for brannsikkerhet og trygg strømforsyning.</p>}
-                {isTrondheim && <p>Trondheim er Norges teknologihovedstad med NTNU og SINTEF som drivkrefter for innovasjon. Byen har en blanding av eldre murgårder i Midtbyen, trehusbebyggelse på Bakklandet og moderne boligprosjekter på Brøset og Lade. Kulde og temperatursvingninger stiller ekstra krav til elektriske anlegg.</p>}
+                {cc && <p>{cc.intro2}</p>}
               </div>
 
-              <FactBox>{kommune.navn} har {antallBedrifter} registrerte elektrikerbedrifter under næringskode 43.210. {isOslo ? "Med over 17 000 sysselsatte er konkurransen høy, noe som gir deg som forbruker gode muligheter til å sammenligne pris og kvalitet." : isBergen ? "Med over 1 500 sysselsatte er Bergen Vestlandets klart største marked for elektrotjenester." : isTrondheim ? "Med over 1 200 sysselsatte er Trondheim Trøndelags klart største marked. NTNU-miljøet driver innovasjon innen smarthus og energistyring." : ""}</FactBox>
+              <FactBox>{kommune.navn} har {antallBedrifter} registrerte elektrikerbedrifter under næringskode 43.210. {cc?.factExtra || ""}</FactBox>
             </div>
 
             {/* ── TJENESTER: Interactive grid ── */}
@@ -203,9 +311,7 @@ export default async function KommuneSide({ params }: Props) {
             <div id="elbillader" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
               <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-4">Installere ladeboks i {kommune.navn}</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                {isOslo && <p>Elbillading hjemme er den enkleste og billigste måten å lade bilen. I Oslo der elbiltettheten er blant Europas høyeste, er etterspørselen etter ladeboksinstallasjon enorm. En autorisert elektriker sørger for at installasjonen er trygg og at anlegget tåler belastningen.</p>}
-                {isBergen && <p>Bergen har en raskt voksende elbilpark, og hjemmelading er den mest praktiske løsningen. Med bratt terreng og mange borettslag har Bergen spesielle utfordringer knyttet til kabelføring og lastbalansering. En autorisert elektriker sørger for trygg installasjon.</p>}
-                {isTrondheim && <p>Trondheim har en av Norges høyeste elbiltettheter utenfor Oslo-regionen, og hjemmelading er den mest praktiske løsningen. Mange av byens borettslag på Flatåsen, Saupstad og Byåsen trenger fellesløsninger med lastbalansering. En autorisert elektriker sørger for trygg installasjon.</p>}
+                {cc && <p>{cc.laderIntro}</p>}
               </div>
 
               <ChecklistBox title="Krav til installasjon" items={[
@@ -221,9 +327,7 @@ export default async function KommuneSide({ params }: Props) {
               </AlertBox>
 
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                {isOslo && <p>Priser i Oslo: enkel installasjon i enebolig med kort avstand til sikringsskap koster fra 12 000 kr. Installasjon i borettslag med lang kabelføring og lastbalansering kan koste mellom 20 000 og 35 000 kr per enhet.</p>}
-                {isBergen && <p>Priser i Bergen: enkel installasjon i enebolig koster fra 10 000 kr. Installasjon i borettslag med lang kabelføring koster mellom 18 000 og 30 000 kr per enhet. Mange eldre borettslag i Bergen trenger oppgradering av hovedsikring i tillegg.</p>}
-                {isTrondheim && <p>Priser i Trondheim: enkel installasjon i enebolig koster fra 9 000 kr. Installasjon i borettslag med lang kabelføring koster mellom 16 000 og 28 000 kr per enhet. Arbeidet meldes til Tensio som er netteier i Trondheim.</p>}
+                {cc && <p>{cc.laderPris}</p>}
               </div>
             </div>
 
@@ -252,20 +356,14 @@ export default async function KommuneSide({ params }: Props) {
             <div id="marked" className="scroll-mt-24 mt-14 max-w-prose mx-auto">
               <h2 className="font-display font-bold text-heading-xl text-secondary-950 mb-2">Markedet for elektrikertjenester i {kommune.navn}</h2>
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4">
-                {isOslo && <p>Oslo er Norges suverent største marked for elektrikertjenester. Bransjen spenner fra store nasjonale entreprenører som Bravida, GK Norge og Caverion med hovedkontor i Oslo, til lokale spesialister i hver bydel.</p>}
-                {isBergen && <p>Bergen er Vestlandets desidert største marked for elektrikertjenester og Norges nest største totalt sett. Bransjen spenner fra store regionale aktører som AF Elkraft og BMO Elektro til spesialiserte lokale firmaer i hver bydel.</p>}
-                {isTrondheim && <p>Trondheim er Trøndelags desidert største marked for elektrikertjenester og Norges tredje største. Bransjen ledes av Vintervoll (221 ansatte), Fjeldseth (142 ansatte) og Elteam (102 ansatte), med en god blanding av store entreprenører og lokale spesialister.</p>}
+                {cc && <p>{cc.marketIntro}</p>}
               </div>
               <CityMarketChart data={cityConfig.market} cityName={kommune.navn} />
               <div className="text-body-md text-secondary-600 leading-relaxed space-y-4 mt-4">
-                {isOslo && <p>Bransjen er i sterk vekst. 160 bedrifter er stiftet de siste fem årene, og bare i 2025 ble det registrert 47 nye elektrikerbedrifter. Samtidig har 144 bedrifter over 20 års erfaring, inkludert bedrifter med røtter tilbake til 1914.</p>}
-                {isBergen && <p>Bransjen i Bergen vokser raskt. 91 bedrifter er stiftet de siste fem årene, og 25 nye ble registrert i 2025 alene. Samtidig har 51 bedrifter over 20 års erfaring, med Bergen Elektroservice (grunnlagt 1985) som en av de eldste aktive.</p>}
-                {isTrondheim && <p>Bransjen i Trondheim vokser jevnt. 43 bedrifter er stiftet de siste fem årene, og 12 nye ble registrert i 2025. Samtidig har 33 bedrifter over 20 års erfaring, med Argon Elektro (grunnlagt 1960) som den eldste aktive elektrikerbedriften i byen.</p>}
+                {cc && <p>{cc.marketGrowth}</p>}
               </div>
 
-              {isOslo && <FactBox emoji="📈">Flest bedrifter holder til i Alna og Grorud (145 bedrifter), der næringsparker gir plass til verksted og lager. Sentrum og Grünerløkka har 60 bedrifter, Frogner og vestkanten rundt 50.</FactBox>}
-              {isBergen && <FactBox emoji="🌧️">Bergens klima med høy nedbør og fuktighet gir ekstra utfordringer for elektriske anlegg. Regelmessig elkontroll er viktigere her enn i mange andre norske byer. Flest bedrifter holder til i Åsane og Arna (82 bedrifter).</FactBox>}
-              {isTrondheim && <FactBox emoji="🎓">Trondheims teknologimiljø med NTNU og SINTEF gjør byen til et foregangsområde for smarthus og energieffektivisering. Nesten alle 139 bedrifter holder til i sentrale Trondheim (postnummer 70xx), med Heimdal og Tiller som populære næringsområder.</FactBox>}
+              {cc && <FactBox emoji={cc.factEmoji}>{cc.factBottom}</FactBox>}
             </div>
 
           </>) : (<>

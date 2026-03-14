@@ -281,6 +281,239 @@ export function getCityConfig(slug: string): CityConfig | null {
     case "oslo": return OSLO_CONFIG;
     case "bergen": return BERGEN_CONFIG;
     case "trondheim": return TRONDHEIM_CONFIG;
+    case "stavanger": return STAVANGER_CONFIG;
+    case "kristiansand": return KRISTIANSAND_CONFIG;
+    case "drammen": return DRAMMEN_CONFIG;
+    case "fredrikstad": return FREDRIKSTAD_CONFIG;
     default: return null;
   }
 }
+
+/* ═══════════════════════════════════════
+   STAVANGER CONFIG
+   ═══════════════════════════════════════ */
+export const STAVANGER_CONFIG: CityConfig = {
+  slug: "stavanger",
+  navn: "Stavanger",
+  netteier: "Lnett",
+  tjenester: [
+    { id: "stikkontakt", tittel: "Stikkontakter og brytere", pris: "1 400 – 3 300", beskrivelse: "Eldre trehusbyen i Stavanger sentrum og Storhaug har ofte begrenset antall stikkontakter.", color: "from-blue-500/10 to-blue-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "sikringsskap", tittel: "Oppgradering sikringsskap", pris: "22 000 – 42 000", beskrivelse: "Gamle Stavanger og Storhaug har mange boliger med utdaterte sikringsskap. Viktig for brannsikkerhet i trehus.", color: "from-orange-500/10 to-orange-600/5", href: "/tjenester/bytte-sikringsskap" },
+    { id: "elkontroll", tittel: "Elkontroll bolig", pris: "2 800 – 5 500", beskrivelse: "Systematisk gjennomgang. Spesielt viktig i oljebyen der mange boliger har høyt strømforbruk.", color: "from-green-500/10 to-green-600/5", href: "/tjenester/elkontroll" },
+    { id: "spotter", tittel: "Spotter og belysning", pris: "750 – 1 400 / punkt", beskrivelse: "LED-spotter og moderne belysning er populært i Stavangers mange oppgraderingsprosjekter.", color: "from-yellow-500/10 to-yellow-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "oppgradering", tittel: "Oppgradering anlegg", pris: "70 000 – 260 000", beskrivelse: "Komplett oppgradering. Leilighet fra 70 000, enebolig fra 100 000 kr. Høy kjøpekraft gir etterspørsel.", color: "from-purple-500/10 to-purple-600/5", href: "/guider/hva-koster-elektriker" },
+    { id: "feilsoking", tittel: "Feilsøking strøm", pris: "1 800 – 4 500", beskrivelse: "Kystklima med salt og fukt gir ekstra belastning på eldre anlegg langs Stavangers kystlinje.", color: "from-red-500/10 to-red-600/5", href: "/tjenester/feilsoking-strom" },
+    { id: "smarthus", tittel: "Smarthus installasjon", pris: "12 000 – 120 000", beskrivelse: "Høy kjøpekraft i Stavanger-regionen driver etterspørselen etter premium smarthusløsninger.", color: "from-cyan-500/10 to-cyan-600/5", href: "/tjenester/smarthus-installasjon" },
+    { id: "renovering", tittel: "Renovering anlegg", pris: "Varierer", beskrivelse: "Bad, kjøkken og hele boliger. Stavanger har mye oppussingsaktivitet i etablerte boligområder.", color: "from-amber-500/10 to-amber-600/5", href: "/guider/hva-koster-elektriker" },
+  ],
+  emergencies: SHARED_EMERGENCIES,
+  problemer: SHARED_PROBLEMS,
+  priser: [
+    { tjeneste: "Elektriker timepris", prisMin: 800, prisMax: 1300, enhet: "per time" },
+    { tjeneste: "Utrykningsgebyr", prisMin: 500, prisMax: 1400, enhet: "per oppdrag" },
+    { tjeneste: "Installasjon stikkontakt", prisMin: 1400, prisMax: 3300, enhet: "per punkt" },
+    { tjeneste: "Montering spotter", prisMin: 750, prisMax: 1400, enhet: "per punkt" },
+    { tjeneste: "Oppgradering sikringsskap", prisMin: 22000, prisMax: 42000, enhet: "per prosjekt", popular: true },
+    { tjeneste: "Installasjon elbillader", prisMin: 10000, prisMax: 30000, enhet: "per installasjon", popular: true },
+    { tjeneste: "Elkontroll bolig", prisMin: 2800, prisMax: 5500, enhet: "per kontroll" },
+    { tjeneste: "Feilsøking strøm", prisMin: 1800, prisMax: 4500, enhet: "per oppdrag" },
+    { tjeneste: "Smarthus grunnpakke", prisMin: 12000, prisMax: 45000, enhet: "per prosjekt" },
+    { tjeneste: "Komplett oppgradering (leilighet)", prisMin: 70000, prisMax: 160000, enhet: "per prosjekt" },
+  ],
+  market: {
+    total: 101,
+    selskapsform: [
+      { label: "Aksjeselskap", value: 62, color: "#f97316" },
+      { label: "Enkeltpersonfirma", value: 37, color: "#fbbf24" },
+      { label: "Øvrige", value: 2, color: "#cbd5e1" },
+    ],
+    topBedrifter: [
+      { label: "Rønning Elektro", value: 233, color: "#f97316" },
+      { label: "Blu Electro", value: 224, color: "#fb923c" },
+      { label: "Rogaland Elektro", value: 118, color: "#fdba74" },
+      { label: "Stavanger Install.", value: 59, color: "#fed7aa" },
+      { label: "Lyse Energi", value: 52, color: "#ffedd5" },
+    ],
+    omrader: [
+      { label: "Stavanger sentrum (40xx)", value: 90, color: "#f97316" },
+      { label: "Randaberg / Rennesøy (41xx)", value: 11, color: "#fb923c" },
+    ],
+    bottomStats: [
+      { v: "101", l: "Registrerte bedrifter" },
+      { v: "1 066", l: "Sysselsatte i bransjen" },
+      { v: "6", l: "Nye bedrifter i 2025" },
+      { v: "1967", l: "Eldste aktivt firma" },
+    ],
+  },
+};
+
+/* ═══════════════════════════════════════
+   KRISTIANSAND CONFIG
+   ═══════════════════════════════════════ */
+export const KRISTIANSAND_CONFIG: CityConfig = {
+  slug: "kristiansand",
+  navn: "Kristiansand",
+  netteier: "Agder Energi Nett",
+  tjenester: [
+    { id: "stikkontakt", tittel: "Stikkontakter og brytere", pris: "1 300 – 3 000", beskrivelse: "Eldre boliger i Posebyen og Lund har ofte behov for flere stikkontakter og oppgradering.", color: "from-blue-500/10 to-blue-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "sikringsskap", tittel: "Oppgradering sikringsskap", pris: "20 000 – 38 000", beskrivelse: "Kristiansands eldre trehusbebyggelse i Posebyen og sentrum trenger moderne sikringsskap.", color: "from-orange-500/10 to-orange-600/5", href: "/tjenester/bytte-sikringsskap" },
+    { id: "elkontroll", tittel: "Elkontroll bolig", pris: "2 500 – 5 000", beskrivelse: "Systematisk gjennomgang av hele anlegget. Viktig i sommerbyen der mange fritidsboliger brukes sesongvis.", color: "from-green-500/10 to-green-600/5", href: "/tjenester/elkontroll" },
+    { id: "spotter", tittel: "Spotter og belysning", pris: "700 – 1 300 / punkt", beskrivelse: "God belysning øker trivsel og boligverdi. Populært ved oppussing i Kristiansands boligområder.", color: "from-yellow-500/10 to-yellow-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "oppgradering", tittel: "Oppgradering anlegg", pris: "65 000 – 230 000", beskrivelse: "Full oppgradering med nytt skap, kurser og kabling. Leilighet fra 65 000, enebolig fra 90 000.", color: "from-purple-500/10 to-purple-600/5", href: "/guider/hva-koster-elektriker" },
+    { id: "feilsoking", tittel: "Feilsøking strøm", pris: "1 600 – 4 000", beskrivelse: "Kystklima med salt og fukt kan påvirke eldre anlegg. Feilsøking krever erfaring med lokale forhold.", color: "from-red-500/10 to-red-600/5", href: "/tjenester/feilsoking-strom" },
+    { id: "smarthus", tittel: "Smarthus installasjon", pris: "10 000 – 100 000", beskrivelse: "Voksende etterspørsel i nye prosjekter på Bjørndalen, Justvik og Søm.", color: "from-cyan-500/10 to-cyan-600/5", href: "/tjenester/smarthus-installasjon" },
+    { id: "renovering", tittel: "Renovering anlegg", pris: "Varierer", beskrivelse: "Oppussing av eldre boliger i Posebyen og Lund krever oppdatering av el-anlegget til NEK 400.", color: "from-amber-500/10 to-amber-600/5", href: "/guider/hva-koster-elektriker" },
+  ],
+  emergencies: SHARED_EMERGENCIES,
+  problemer: SHARED_PROBLEMS,
+  priser: [
+    { tjeneste: "Elektriker timepris", prisMin: 750, prisMax: 1200, enhet: "per time" },
+    { tjeneste: "Utrykningsgebyr", prisMin: 450, prisMax: 1300, enhet: "per oppdrag" },
+    { tjeneste: "Installasjon stikkontakt", prisMin: 1300, prisMax: 3000, enhet: "per punkt" },
+    { tjeneste: "Montering spotter", prisMin: 700, prisMax: 1300, enhet: "per punkt" },
+    { tjeneste: "Oppgradering sikringsskap", prisMin: 20000, prisMax: 38000, enhet: "per prosjekt", popular: true },
+    { tjeneste: "Installasjon elbillader", prisMin: 9000, prisMax: 28000, enhet: "per installasjon", popular: true },
+    { tjeneste: "Elkontroll bolig", prisMin: 2500, prisMax: 5000, enhet: "per kontroll" },
+    { tjeneste: "Feilsøking strøm", prisMin: 1600, prisMax: 4000, enhet: "per oppdrag" },
+    { tjeneste: "Smarthus grunnpakke", prisMin: 10000, prisMax: 40000, enhet: "per prosjekt" },
+    { tjeneste: "Komplett oppgradering (leilighet)", prisMin: 65000, prisMax: 140000, enhet: "per prosjekt" },
+  ],
+  market: {
+    total: 101,
+    selskapsform: [
+      { label: "Aksjeselskap", value: 68, color: "#f97316" },
+      { label: "Enkeltpersonfirma", value: 28, color: "#fbbf24" },
+      { label: "Øvrige", value: 5, color: "#cbd5e1" },
+    ],
+    topBedrifter: [
+      { label: "On & Offshore Serv.", value: 158, color: "#f97316" },
+      { label: "Elektroxperten", value: 111, color: "#fb923c" },
+      { label: "Avitell", value: 110, color: "#fdba74" },
+      { label: "EK Elektro", value: 28, color: "#fed7aa" },
+      { label: "Fiber Line", value: 25, color: "#ffedd5" },
+    ],
+    omrader: [
+      { label: "Kristiansand (46xx)", value: 101, color: "#f97316" },
+    ],
+    bottomStats: [
+      { v: "101", l: "Registrerte bedrifter" },
+      { v: "694", l: "Sysselsatte i bransjen" },
+      { v: "7", l: "Nye bedrifter i 2025" },
+      { v: "1978", l: "Eldste aktivt firma" },
+    ],
+  },
+};
+
+/* ═══════════════════════════════════════
+   DRAMMEN CONFIG
+   ═══════════════════════════════════════ */
+export const DRAMMEN_CONFIG: CityConfig = {
+  slug: "drammen",
+  navn: "Drammen",
+  netteier: "Glitre Nett",
+  tjenester: [
+    { id: "stikkontakt", tittel: "Stikkontakter og brytere", pris: "1 300 – 3 100", beskrivelse: "Mange eldre boliger langs Drammenselva og på Bragernes har behov for flere stikkontakter.", color: "from-blue-500/10 to-blue-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "sikringsskap", tittel: "Oppgradering sikringsskap", pris: "20 000 – 38 000", beskrivelse: "Eldre boligmasse fra etterkrigstiden på Konnerud og Åssiden trenger moderne sikringsskap.", color: "from-orange-500/10 to-orange-600/5", href: "/tjenester/bytte-sikringsskap" },
+    { id: "elkontroll", tittel: "Elkontroll bolig", pris: "2 500 – 5 000", beskrivelse: "Systematisk gjennomgang. Drammen har mye boligbygging og oppussing som krever kontroll.", color: "from-green-500/10 to-green-600/5", href: "/tjenester/elkontroll" },
+    { id: "spotter", tittel: "Spotter og belysning", pris: "700 – 1 300 / punkt", beskrivelse: "LED-spotter og moderne belysning er populært i Drammens mange oppgraderingsprosjekter.", color: "from-yellow-500/10 to-yellow-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "oppgradering", tittel: "Oppgradering anlegg", pris: "65 000 – 230 000", beskrivelse: "Full oppgradering. Drammen er i sterk vekst med byfornyelse langs elvebredden.", color: "from-purple-500/10 to-purple-600/5", href: "/guider/hva-koster-elektriker" },
+    { id: "feilsoking", tittel: "Feilsøking strøm", pris: "1 600 – 4 000", beskrivelse: "Feilsøking med spesialisert måleutstyr. Viktig i eldre anlegg som ikke tåler dagens belastning.", color: "from-red-500/10 to-red-600/5", href: "/tjenester/feilsoking-strom" },
+    { id: "smarthus", tittel: "Smarthus installasjon", pris: "10 000 – 100 000", beskrivelse: "Voksende etterspørsel i nye leilighetsprosjekter langs Drammenselva og på Gulskogen.", color: "from-cyan-500/10 to-cyan-600/5", href: "/tjenester/smarthus-installasjon" },
+    { id: "renovering", tittel: "Renovering anlegg", pris: "Varierer", beskrivelse: "Byfornyelsen i Drammen driver massiv oppussingsaktivitet med behov for elektrisk oppgradering.", color: "from-amber-500/10 to-amber-600/5", href: "/guider/hva-koster-elektriker" },
+  ],
+  emergencies: SHARED_EMERGENCIES,
+  problemer: SHARED_PROBLEMS,
+  priser: [
+    { tjeneste: "Elektriker timepris", prisMin: 750, prisMax: 1200, enhet: "per time" },
+    { tjeneste: "Utrykningsgebyr", prisMin: 450, prisMax: 1300, enhet: "per oppdrag" },
+    { tjeneste: "Installasjon stikkontakt", prisMin: 1300, prisMax: 3100, enhet: "per punkt" },
+    { tjeneste: "Montering spotter", prisMin: 700, prisMax: 1300, enhet: "per punkt" },
+    { tjeneste: "Oppgradering sikringsskap", prisMin: 20000, prisMax: 38000, enhet: "per prosjekt", popular: true },
+    { tjeneste: "Installasjon elbillader", prisMin: 9000, prisMax: 28000, enhet: "per installasjon", popular: true },
+    { tjeneste: "Elkontroll bolig", prisMin: 2500, prisMax: 5000, enhet: "per kontroll" },
+    { tjeneste: "Feilsøking strøm", prisMin: 1600, prisMax: 4000, enhet: "per oppdrag" },
+    { tjeneste: "Smarthus grunnpakke", prisMin: 10000, prisMax: 40000, enhet: "per prosjekt" },
+    { tjeneste: "Komplett oppgradering (leilighet)", prisMin: 65000, prisMax: 145000, enhet: "per prosjekt" },
+  ],
+  market: {
+    total: 104,
+    selskapsform: [
+      { label: "Aksjeselskap", value: 78, color: "#f97316" },
+      { label: "Enkeltpersonfirma", value: 24, color: "#fbbf24" },
+      { label: "Øvrige", value: 2, color: "#cbd5e1" },
+    ],
+    topBedrifter: [
+      { label: "Powertech", value: 266, color: "#f97316" },
+      { label: "Ing. Ivar Pettersen", value: 236, color: "#fb923c" },
+      { label: "Abicon Elektro", value: 76, color: "#fdba74" },
+      { label: "Powertech Eng.", value: 69, color: "#fed7aa" },
+      { label: "Norsk Brannvern", value: 54, color: "#ffedd5" },
+    ],
+    omrader: [
+      { label: "Drammen (30xx)", value: 104, color: "#f97316" },
+    ],
+    bottomStats: [
+      { v: "104", l: "Registrerte bedrifter" },
+      { v: "1 042", l: "Sysselsatte i bransjen" },
+      { v: "10", l: "Nye bedrifter i 2025" },
+      { v: "1967", l: "Eldste aktivt firma" },
+    ],
+  },
+};
+
+/* ═══════════════════════════════════════
+   FREDRIKSTAD CONFIG
+   ═══════════════════════════════════════ */
+export const FREDRIKSTAD_CONFIG: CityConfig = {
+  slug: "fredrikstad",
+  navn: "Fredrikstad",
+  netteier: "Elvia",
+  tjenester: [
+    { id: "stikkontakt", tittel: "Stikkontakter og brytere", pris: "1 200 – 2 800", beskrivelse: "Gamlebyen og eldre boligområder i Fredrikstad har ofte behov for flere stikkontakter.", color: "from-blue-500/10 to-blue-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "sikringsskap", tittel: "Oppgradering sikringsskap", pris: "18 000 – 35 000", beskrivelse: "Mange etterkrigsboliger på Selbak, Lisleby og Gressvik har utdaterte sikringsskap.", color: "from-orange-500/10 to-orange-600/5", href: "/tjenester/bytte-sikringsskap" },
+    { id: "elkontroll", tittel: "Elkontroll bolig", pris: "2 300 – 4 500", beskrivelse: "Systematisk gjennomgang. Viktig ved boligkjøp og salg i Fredrikstads aktive boligmarked.", color: "from-green-500/10 to-green-600/5", href: "/tjenester/elkontroll" },
+    { id: "spotter", tittel: "Spotter og belysning", pris: "650 – 1 200 / punkt", beskrivelse: "Moderne belysning er populært ved oppussing. Fredrikstad har noe lavere priser enn storbyen.", color: "from-yellow-500/10 to-yellow-600/5", href: "/tjenester/installere-belysning-spotter" },
+    { id: "oppgradering", tittel: "Oppgradering anlegg", pris: "60 000 – 200 000", beskrivelse: "Full oppgradering med nytt skap, kurser og kabling. Leilighet fra 60 000, enebolig fra 85 000.", color: "from-purple-500/10 to-purple-600/5", href: "/guider/hva-koster-elektriker" },
+    { id: "feilsoking", tittel: "Feilsøking strøm", pris: "1 500 – 3 800", beskrivelse: "Feilsøking av strømproblemer. Mange eldre anlegg i Fredrikstad er ikke dimensjonert for dagens bruk.", color: "from-red-500/10 to-red-600/5", href: "/tjenester/feilsoking-strom" },
+    { id: "smarthus", tittel: "Smarthus installasjon", pris: "10 000 – 90 000", beskrivelse: "Voksende etterspørsel etter smarthus, spesielt i nye prosjekter langs elva og på Værste.", color: "from-cyan-500/10 to-cyan-600/5", href: "/tjenester/smarthus-installasjon" },
+    { id: "renovering", tittel: "Renovering anlegg", pris: "Varierer", beskrivelse: "Fredrikstad har mye oppussingsaktivitet i etablerte boligområder fra 1950–1980-tallet.", color: "from-amber-500/10 to-amber-600/5", href: "/guider/hva-koster-elektriker" },
+  ],
+  emergencies: SHARED_EMERGENCIES,
+  problemer: SHARED_PROBLEMS,
+  priser: [
+    { tjeneste: "Elektriker timepris", prisMin: 700, prisMax: 1100, enhet: "per time" },
+    { tjeneste: "Utrykningsgebyr", prisMin: 400, prisMax: 1200, enhet: "per oppdrag" },
+    { tjeneste: "Installasjon stikkontakt", prisMin: 1200, prisMax: 2800, enhet: "per punkt" },
+    { tjeneste: "Montering spotter", prisMin: 650, prisMax: 1200, enhet: "per punkt" },
+    { tjeneste: "Oppgradering sikringsskap", prisMin: 18000, prisMax: 35000, enhet: "per prosjekt", popular: true },
+    { tjeneste: "Installasjon elbillader", prisMin: 8000, prisMax: 25000, enhet: "per installasjon", popular: true },
+    { tjeneste: "Elkontroll bolig", prisMin: 2300, prisMax: 4500, enhet: "per kontroll" },
+    { tjeneste: "Feilsøking strøm", prisMin: 1500, prisMax: 3800, enhet: "per oppdrag" },
+    { tjeneste: "Smarthus grunnpakke", prisMin: 10000, prisMax: 35000, enhet: "per prosjekt" },
+    { tjeneste: "Komplett oppgradering (leilighet)", prisMin: 60000, prisMax: 130000, enhet: "per prosjekt" },
+  ],
+  market: {
+    total: 79,
+    selskapsform: [
+      { label: "Aksjeselskap", value: 45, color: "#f97316" },
+      { label: "Enkeltpersonfirma", value: 30, color: "#fbbf24" },
+      { label: "Øvrige", value: 4, color: "#cbd5e1" },
+    ],
+    topBedrifter: [
+      { label: "Installatøren Frstad", value: 134, color: "#f97316" },
+      { label: "Storm Elektro", value: 107, color: "#fb923c" },
+      { label: "ZK Elektro", value: 34, color: "#fdba74" },
+      { label: "Slevik Elektriske", value: 26, color: "#fed7aa" },
+      { label: "Elektrikertjen. S-F", value: 17, color: "#ffedd5" },
+    ],
+    omrader: [
+      { label: "Fredrikstad (16xx)", value: 79, color: "#f97316" },
+    ],
+    bottomStats: [
+      { v: "79", l: "Registrerte bedrifter" },
+      { v: "378", l: "Sysselsatte i bransjen" },
+      { v: "2", l: "Nye bedrifter i 2025" },
+      { v: "1991", l: "Eldste aktivt firma" },
+    ],
+  },
+};
