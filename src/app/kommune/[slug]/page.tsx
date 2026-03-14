@@ -14,6 +14,7 @@ import { ELEKTRIKER_PER_KOMMUNE, TOTALT_ELEKTRIKERE } from "@/data/elektrikere-s
 import { buildFAQSchema, buildLocalBusinessSchema } from "@/lib/utils";
 import BedriftOversikt from "@/components/ui/BedriftOversikt";
 import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
+import { OSLO_BYDELER } from "@/data/oslo-bydeler";
 import { BERGEN_BEDRIFTER } from "@/data/bedrifter/bergen";
 import { TRONDHEIM_BEDRIFTER } from "@/data/bedrifter/trondheim";
 import { STAVANGER_BEDRIFTER } from "@/data/bedrifter/stavanger";
@@ -31,7 +32,7 @@ import { getCityConfig } from "@/data/city-configs";
 
 interface Props { params: Promise<{ slug: string }>; }
 
-export async function generateStaticParams() { return getAllKommuneSlugs().map((slug) => ({ slug })); }
+export async function generateStaticParams() { return getAllKommuneSlugs().filter((s) => s !== "oslo").map((slug) => ({ slug })); }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -119,7 +120,8 @@ export default async function KommuneSide({ params }: Props) {
   const { slug } = await params;
   const kommune = getKommune(slug);
   if (!kommune) notFound();
-  const relatertKommuner = getKommunerByFylke(kommune.fylkeSlug).filter((k) => k.slug !== slug).slice(0, 8);
+  const naboKommuner = getKommunerByFylke(kommune.fylkeSlug).filter((k) => k.slug !== slug);
+  const relatertKommuner = naboKommuner.length > 0 ? naboKommuner.slice(0, 8) : getKommunerByFylke("akershus").slice(0, 8);
   const antallBedrifter = ELEKTRIKER_PER_KOMMUNE[slug] || 0;
   const isOslo = slug === "oslo";
   const isBergen = slug === "bergen";
@@ -396,12 +398,32 @@ export default async function KommuneSide({ params }: Props) {
           </div>
         </section>
 
-        {/* ═══ ELEKTRIKER I NÆRHETEN ═══ */}
-        {relatertKommuner.length > 0 && (
+        {/* ═══ OSLO: BYDELER ═══ */}
+        {isOslo && (
+          <section className="section-subtle py-8 sm:py-10">
+            <div className="container-site">
+              <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-2">Elektriker i Oslos bydeler</h2>
+              <p className="text-body-sm text-secondary-500 mb-5">Se elektrikere og bedrifter i din bydel i Oslo.</p>
+              <div className="flex flex-wrap gap-2">
+                {OSLO_BYDELER.map((b) => {
+                  const bAnt = OSLO_BEDRIFTER.filter((bed) => { const p = parseInt(bed.p, 10); return !isNaN(p) && b.postRanges.some(([lo, hi]) => p >= lo && p <= hi); }).length;
+                  return (
+                    <Link key={b.slug} href={`/kommune/oslo/${b.slug}`} className="badge-neutral hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors">
+                      {b.navn}{bAnt > 0 && <span className="text-secondary-400 ml-1">({bAnt})</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ═══ ELEKTRIKER I NÆRHETEN (ikke Oslo) ═══ */}
+        {!isOslo && relatertKommuner.length > 0 && (
           <section className={`${isRichCity ? "section-subtle" : "section-white"} py-8 sm:py-10`}>
             <div className="container-site">
               <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-2">Elektriker i nærheten av {kommune.navn}</h2>
-              <p className="text-body-sm text-secondary-500 mb-5">Finner du ikke det du leter etter? Se elektrikere i nærliggende kommuner i {kommune.fylke}.</p>
+              <p className="text-body-sm text-secondary-500 mb-5">Finner du ikke det du leter etter? Se elektrikere i nærliggende kommuner{naboKommuner.length > 0 ? ` i ${kommune.fylke}` : ""}.</p>
               <div className="flex flex-wrap gap-2">
                 {relatertKommuner.map((k) => {
                   const kAnt = ELEKTRIKER_PER_KOMMUNE[k.slug] || 0;
