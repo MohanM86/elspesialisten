@@ -3,6 +3,7 @@ import { KOMMUNER, FYLKER } from "@/data/kommuner";
 import { TJENESTER } from "@/data/tjenester";
 import { OSLO_BYDELER } from "@/data/oslo-bydeler";
 import { BERGEN_BYDELER } from "@/data/bergen-bydeler";
+import { TRONDHEIM_BYDELER } from "@/data/trondheim-bydeler";
 
 const BASE_URL = "https://elspesialisten.no";
 const GUIDE_SLUGS = ["hva-koster-elektriker","elbillader-pris","bytte-sikringsskap","installere-elbillader-selv","smarthus-installasjon","varmekabler-bad","jordfeil-og-sikringer","elkontroll-bolig","elektriker-akutt","nyttanlegg-pris"];
@@ -30,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const bydelPages: MetadataRoute.Sitemap = [
     ...OSLO_BYDELER.map((b) => ({ url: `${BASE_URL}/kommune/oslo/${b.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
     ...BERGEN_BYDELER.map((b) => ({ url: `${BASE_URL}/kommune/bergen/${b.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...TRONDHEIM_BYDELER.map((b) => ({ url: `${BASE_URL}/kommune/trondheim/${b.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
   ];
   return [...staticPages, ...tjenesterPages, ...fylkePages, ...kommunePages, ...bydelPages, ...guidePages];
 }
