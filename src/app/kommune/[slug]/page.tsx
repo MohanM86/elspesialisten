@@ -15,6 +15,7 @@ import { buildFAQSchema, buildLocalBusinessSchema } from "@/lib/utils";
 import BedriftOversikt from "@/components/ui/BedriftOversikt";
 import { OSLO_BEDRIFTER } from "@/data/bedrifter/oslo";
 import { OSLO_BYDELER } from "@/data/oslo-bydeler";
+import { BERGEN_BYDELER } from "@/data/bergen-bydeler";
 import { BERGEN_BEDRIFTER } from "@/data/bedrifter/bergen";
 import { TRONDHEIM_BEDRIFTER } from "@/data/bedrifter/trondheim";
 import { STAVANGER_BEDRIFTER } from "@/data/bedrifter/stavanger";
@@ -32,7 +33,7 @@ import { getCityConfig } from "@/data/city-configs";
 
 interface Props { params: Promise<{ slug: string }>; }
 
-export async function generateStaticParams() { return getAllKommuneSlugs().filter((s) => s !== "oslo").map((slug) => ({ slug })); }
+export async function generateStaticParams() { return getAllKommuneSlugs().filter((s) => s !== "oslo" && s !== "bergen").map((slug) => ({ slug })); }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -418,8 +419,28 @@ export default async function KommuneSide({ params }: Props) {
           </section>
         )}
 
-        {/* ═══ ELEKTRIKER I NÆRHETEN (ikke Oslo) ═══ */}
-        {!isOslo && relatertKommuner.length > 0 && (
+        {/* ═══ BERGEN: BYDELER ═══ */}
+        {isBergen && (
+          <section className="section-subtle py-8 sm:py-10">
+            <div className="container-site">
+              <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-2">Elektriker i Bergens bydeler</h2>
+              <p className="text-body-sm text-secondary-500 mb-5">Se elektrikere og bedrifter i din bydel i Bergen.</p>
+              <div className="flex flex-wrap gap-2">
+                {BERGEN_BYDELER.map((b) => {
+                  const bAnt = BERGEN_BEDRIFTER.filter((bed) => { const p = parseInt(bed.p, 10); return !isNaN(p) && b.postRanges.some(([lo, hi]) => p >= lo && p <= hi); }).length;
+                  return (
+                    <Link key={b.slug} href={`/kommune/bergen/${b.slug}`} className="badge-neutral hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors">
+                      {b.navn}{bAnt > 0 && <span className="text-secondary-400 ml-1">({bAnt})</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ═══ ELEKTRIKER I NÆRHETEN (andre byer) ═══ */}
+        {!isOslo && !isBergen && relatertKommuner.length > 0 && (
           <section className={`${isRichCity ? "section-subtle" : "section-white"} py-8 sm:py-10`}>
             <div className="container-site">
               <h2 className="font-display font-bold text-heading-lg text-secondary-950 mb-2">Elektriker i nærheten av {kommune.navn}</h2>
